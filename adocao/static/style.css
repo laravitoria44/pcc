@@ -1,0 +1,275 @@
+/* Configurações Gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #1e4d2b; /* Fundo verde-escuro ao redor da página */
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Container do site imitando a moldura da imagem */
+.site-container {
+    background-color: #f7f4e9; /* Fundo creme suave */
+    width: 100%;
+    max-width: 1200px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Header / Navbar */
+header {
+    background-color: #ffffff;
+    margin: 20px 30px;
+    padding: 12px 25px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.4rem;
+    color: #1e4d2b;
+}
+
+.logo i {
+    font-size: 1.6rem;
+    color: #e67e22;
+}
+
+header nav ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+header nav ul li a {
+    text-decoration: none;
+    color: #444;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #1e4d2b;
+}
+
+.nav-arrow {
+    font-size: 0.7rem;
+    margin-left: 2px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    color: #444;
+    cursor: pointer;
+}
+
+.btn-signup {
+    background-color: #1e4d2b;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.btn-signup:hover {
+    background-color: #14351d;
+}
+
+/* Seção Hero */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px 40px 60px;
+    gap: 40px;
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero-content h1 {
+    font-size: 3.2rem;
+    line-height: 1.15;
+    color: #1e4d2b;
+    margin-bottom: 15px;
+}
+
+.hero-content h1 .highlight {
+    color: #27ae60;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    max-width: 480px;
+}
+
+/* Caixa de Busca */
+.search-box {
+    background-color: #ffffff;
+    border-radius: 40px;
+    padding: 6px 6px 6px 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    margin-bottom: 30px;
+    max-width: 480px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.btn-search {
+    background-color: #1e4d2b;
+    color: #ffffff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-search:hover {
+    background-color: #14351d;
+}
+
+/* Benefícios / Destaques */
+.features {
+    display: flex;
+    gap: 20px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.feature-item i {
+    color: #1e4d2b;
+    font-size: 1rem;
+}
+
+/* Imagem Hero */
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+/* Barra de Estatísticas */
+.stats-bar {
+    background-color: #1e4d2b;
+    padding: 25px 40px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: #ffffff;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-item i {
+    font-size: 1.8rem;
+    color: #27ae60;
+}
+
+.stat-item h3 {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.stat-item p {
+    font-size: 0.8rem;
+    color: #d1e7dd;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 35px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsividade Básica */
+@media (max-width: 900px) {
+    .hero {
+        flex-direction: column;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .hero-content h1 {
+        font-size: 2.4rem;
+    }
+
+    .search-box {
+        margin: 0 auto 25px auto;
+    }
+
+    .features {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .stats-bar {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .stat-divider {
+        display: none;
+    }
+
+    header nav {
+        display: none; /* Em telas pequenas, você pode implementar um menu hambúrguer futuramente */
+    }
+}

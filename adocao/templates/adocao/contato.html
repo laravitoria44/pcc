@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetAdote - Fale Conosco</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'contato.css' %}">
+</head>
+<body>
+
+    <div class="site-container">
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-paw"></i>
+                <span>Pet<b>Adote</b></span>
+            </div>
+            <nav>
+    <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'sobre' %}">Sobre Nós</a></li>
+        <li><a href="{% url 'vacinacao' %}">Vacinação</a></li>
+        <li><a href="{% url 'quero_adotar' %}">Quero Adotar</a></li>
+        <li><a href="{% url 'contato' %}">Contato</a></li>
+    </ul>
+</nav>
+            <div class="header-actions">
+                <button class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <a href="#" class="btn-signup">Cadastrar</a>
+            </div>
+        </header>
+
+        <main class="contact-section">
+            <div class="contact-header">
+                <h1>Entre em <span class="highlight">Contato</span></h1>
+                <p>Tem dúvidas sobre o processo de adoção, quer ser um protetor parceiro ou deseja nos ajudar? Mande uma mensagem!</p>
+            </div>
+
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <h2>Informações Úteis</h2>
+                    <p>Fique à vontade para nos contatar pelos canais abaixo ou nos fazer uma visita.</p>
+
+                    <div class="info-list">
+                        <div class="info-item">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <div>
+                                <h4>Endereço</h4>
+                                <p>Rua dos Pets, 123 - São Paulo, SP</p>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <h4>E-mail</h4>
+                                <p>contato@petadote.org.br</p>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <h4>Telefone / WhatsApp</h4>
+                                <p>(11) 99999-8888</p>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <i class="fa-solid fa-clock"></i>
+                            <div>
+                                <h4>Atendimento</h4>
+                                <p>Segunda a Sábado: 09h às 18h</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="social-links">
+                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <div class="contact-form-container">
+                  <form method="POST" action="{% url 'contato' %}" class="contact-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <input type="text" id="telefone" name="telefone" placeholder="(11) 99999-9999">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="assunto">Assunto</label>
+                    <select id="assunto" name="assunto">
+                        <option value="" disabled selected>Selecione um assunto</option>
+                        <option value="Dúvida sobre Adoção">Dúvida sobre Adoção</option>
+                        <option value="Quero ser Protetor Parceiro">Quero ser Protetor Parceiro</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mensagem">Mensagem</label>
+                    <textarea id="mensagem" name="mensagem" placeholder="Escreva sua mensagem aqui..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Enviar Mensagem <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 PetAdote. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
