@@ -1,0 +1,24 @@
+{% extends 'usuarios/base_auth.html' %}
+
+{% block title %}Meu perfil | PetAdote{% endblock %}
+
+{% block auth_content %}
+    <h1>Olá, {{ user.get_short_name }}</h1>
+    <p class="auth-intro">Você está autenticado no PetAdote.</p>
+
+    <dl class="profile-data">
+        <div><dt>Nome</dt><dd>{{ user.nome_completo }}</dd></div>
+        <div><dt>E-mail</dt><dd>{{ user.email }}</dd></div>
+        <div><dt>CPF</dt><dd>{{ user.cpf }}</dd></div>
+        <div><dt>Telefone</dt><dd>{{ user.telefone }}</dd></div>
+        <div><dt>Perfil</dt><dd>{{ user.get_perfil_display }}</dd></div>
+    </dl>
+
+    <div class="profile-actions">
+        <a href="{% url 'home' %}" class="auth-secondary">Voltar ao início</a>
+        <form method="post" action="{% url 'usuarios:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="auth-submit">Sair</button>
+        </form>
+    </div>
+{% endblock %}

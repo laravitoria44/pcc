@@ -1,0 +1,35 @@
+{% extends 'animais/base_portal.html' %}
+
+{% block title %}Vacinação de {{ animal.nome }} | PetAdote{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{% url 'animais:detalhe' animal.id_animal %}">← Voltar para o perfil de {{ animal.nome }}</a>
+    <section class="page-heading">
+        <div>
+            <span class="eyebrow">Carteira de vacinação</span>
+            <h1>Vacinação de {{ animal.nome }}</h1>
+            <p>Consulte as doses aplicadas e as próximas datas previstas.</p>
+        </div>
+    </section>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr><th>Vacina</th><th>Aplicação</th><th>Próxima dose</th><th>Dose</th><th>Fabricante</th></tr>
+            </thead>
+            <tbody>
+                {% for vacinacao in animal.vacinacoes.all %}
+                    <tr>
+                        <td><strong>{{ vacinacao.vacina.nome_vacina }}</strong><small>{{ vacinacao.vacina.especie_alvo }}</small></td>
+                        <td>{{ vacinacao.data_aplicacao|date:"d/m/Y" }}</td>
+                        <td>{{ vacinacao.data_proxima_dose|date:"d/m/Y" }}</td>
+                        <td>{{ vacinacao.dose }}</td>
+                        <td>{{ vacinacao.fabricante }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="empty-cell">Nenhuma vacinação registrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'animais/base_portal.html' %}
+
+{% block title %}Animais para adoção | PetAdote{% endblock %}
+
+{% block content %}
+    <section class="page-heading">
+        <div>
+            <span class="eyebrow">Encontre seu novo amigo</span>
+            <h1>Animais para adoção</h1>
+            <p>Consulte o perfil, a vacinação e o histórico de saúde de cada animal.</p>
+        </div>
+        <a class="button button-secondary" href="{% url 'adocoes:minhas' %}">Minhas solicitações</a>
+    </section>
+
+    <form method="get" class="filters" role="search">
+        <div class="filter-field filter-search">
+            <label for="id_q">Buscar</label>
+            <input id="id_q" type="search" name="q" value="{{ filtros.q }}" placeholder="Nome, raça ou pelagem">
+        </div>
+        <div class="filter-field">
+            <label for="id_especie">Espécie</label>
+            <select id="id_especie" name="especie">
+                <option value="">Todas</option>
+                {% for especie in especies %}
+                    <option value="{{ especie }}" {% if filtros.especie == especie %}selected{% endif %}>{{ especie }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-field">
+            <label for="id_porte">Porte</label>
+            <select id="id_porte" name="porte">
+                <option value="">Todos</option>
+                {% for porte in portes %}
+                    <option value="{{ porte }}" {% if filtros.porte == porte %}selected{% endif %}>{{ porte }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-field">
+            <label for="id_status">Status</label>
+            <select id="id_status" name="status">
+                <option value="">Todos</option>
+                {% for status in status_disponiveis %}
+                    <option value="{{ status }}" {% if filtros.status == status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="button">Filtrar</button>
+        <a href="{% url 'animais:lista' %}" class="clear-filters">Limpar</a>
+    </form>
+
+    <div class="result-count">
+        {{ page_obj.paginator.count }}
+        {% if page_obj.paginator.count == 1 %}animal encontrado{% else %}animais encontrados{% endif %}
+    </div>
+
+    {% if animais %}
+        <section class="animal-grid" aria-label="Resultado da busca">
+            {% for animal in animais %}
+                <article class="animal-card">
+                    <a href="{% url 'animais:detalhe' animal.id_animal %}" class="animal-image-link">
+                        {% with foto=animal.fotos.all|first %}
+                            {% if foto %}
+                                <img src="{{ foto.url_foto }}" alt="{{ foto.descricao }}">
+                            {% else %}
+                                <div class="image-placeholder" aria-label="Animal sem foto">🐾</div>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                    <div class="animal-card-content">
+                        <div class="card-heading">
+                            <h2>{{ animal.nome }}</h2>
+                            <span class="status-badge">{{ animal.status }}</span>
+                        </div>
+                        <p>{{ animal.especie }} · {{ animal.raca }}</p>
+                        <p>{{ animal.sexo }} · Porte {{ animal.porte|lower }} · {{ animal.peso }} kg</p>
+                        <a class="card-link" href="{% url 'animais:detalhe' animal.id_animal %}">Ver perfil completo</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <section class="empty-state">
+            <span>🐾</span>
+            <h2>Nenhum animal encontrado</h2>
+            <p>Tente remover alguns filtros para ampliar sua busca.</p>
+        </section>
+    {% endif %}
+
+    {% if is_paginated %}
+        <nav class="pagination" aria-label="Paginação">
+            {% if page_obj.has_previous %}
+                <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">Próxima</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% endblock %}

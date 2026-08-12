@@ -1,129 +1,39 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PetAdote - Guia de Vacinação</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'vacinacao.css' %}">
-</head>
-<body>
+{% extends 'base.html' %}
 
-    <div class="site-container">
-        <header>
-            <div class="logo">
-                <i class="fa-solid fa-paw"></i>
-                <span>Pet<b>Adote</b></span>
+{% block title %}Guia de vacinação | PetAdote{% endblock %}
+
+{% block content %}
+    <section class="page-hero">
+        <div class="content-width">
+            <span class="eyebrow-ds">Saúde preventiva</span>
+            <h1 class="page-title">Vacinação é proteção para toda a vida.</h1>
+            <p class="lead">Entenda as vacinas essenciais e mantenha o acompanhamento veterinário do seu companheiro sempre atualizado.</p>
+        </div>
+    </section>
+
+    <section class="content-width section">
+        <div class="section-heading-ds"><div><span class="eyebrow-ds">Vacinas essenciais</span><h2>Proteção para cães e gatos</h2></div><p>O protocolo deve ser definido por um médico-veterinário conforme idade, saúde e rotina do animal.</p></div>
+        <div class="info-grid">
+            <article class="ds-card"><span class="ds-card-icon">C</span><h3>Cães</h3><ul><li>V8 ou V10</li><li>Antirrábica</li><li>Gripe canina e outras conforme avaliação</li></ul></article>
+            <article class="ds-card"><span class="ds-card-icon">G</span><h3>Gatos</h3><ul><li>V3, V4 ou V5</li><li>Antirrábica</li><li>Protocolos específicos conforme exposição</li></ul></article>
+            <article class="ds-card"><span class="ds-card-icon">✓</span><h3>Acompanhamento</h3><p>Guarde os comprovantes, acompanhe reforços e nunca aplique vacinas sem orientação profissional.</p></article>
+        </div>
+    </section>
+
+    <section class="soft-section section">
+        <div class="content-width">
+            <div class="section-heading-ds"><div><span class="eyebrow-ds">Calendário básico</span><h2>Primeiros meses e reforços</h2></div></div>
+            <div class="ds-table-wrap">
+                <table class="ds-table">
+                    <thead><tr><th>Idade</th><th>Vacina recomendada</th><th>Observação</th></tr></thead>
+                    <tbody>
+                        <tr><td>6 a 8 semanas</td><td>1ª dose múltipla</td><td>Início da proteção do filhote</td></tr>
+                        <tr><td>12 semanas</td><td>2ª dose múltipla</td><td>Reforço da resposta imunológica</td></tr>
+                        <tr><td>16 semanas</td><td>3ª dose + antirrábica</td><td>Conclusão do protocolo inicial</td></tr>
+                        <tr><td>Anualmente</td><td>Reforços</td><td>Conforme orientação veterinária</td></tr>
+                    </tbody>
+                </table>
             </div>
-            <nav>
-    <ul>
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'sobre' %}">Sobre Nós</a></li>
-        <li><a href="{% url 'vacinacao' %}">Vacinação</a></li>
-        <li><a href="{% url 'quero_adotar' %}">Quero Adotar</a></li>
-        <li><a href="{% url 'contato' %}">Contato</a></li>
-    </ul>
-</nav>
-            <div class="header-actions">
-                <button class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <a href="#" class="btn-signup">Cadastrar</a>
-            </div>
-        </header>
-
-        <section class="vaccine-hero">
-            <h1>Vacinação Pet: <span class="highlight">Proteção e Amor</span></h1>
-            <p>Manter a carteira de vacinação atualizada é o passo mais importante para garantir uma vida longa, saudável e feliz para o seu amigo de quatro patas.</p>
-        </section>
-
-        <main class="vaccine-content">
-            <section class="vaccine-cards-section">
-                <h2>Vacinas Essenciais</h2>
-                <div class="cards-grid">
-                    <div class="vaccine-card">
-                        <div class="card-icon"><i class="fa-solid fa-dog"></i></div>
-                        <h3>Para Cães</h3>
-                        <ul>
-                            <li><strong>V8 / V10 (Múltipla):</strong> Protege contra Cinomose, Parvovirose, Coronavirose, Hepatite Infecciosa e Leptospirose.</li>
-                            <li><strong>Antirrábica:</strong> Obrigatória por lei, protege contra o vírus da Raiva.</li>
-                            <li><strong>Gripe Canina & Leishmaniose:</strong> Vacinas complementares recomendadas por veterinários.</li>
-                        </ul>
-                    </div>
-
-                    <div class="vaccine-card">
-                        <div class="card-icon"><i class="fa-solid fa-cat"></i></div>
-                        <h3>Para Gatos</h3>
-                        <ul>
-                            <li><strong>V3 / V4 / V5 (Múltipla Felina):</strong> Protege contra Panleucopenia, Calicivirose, Rinotraqueíte e FeLV (na V5).</li>
-                            <li><strong>Antirrábica:</strong> Fundamental para evitar a Raiva também nos felinos.</li>
-                            <li><strong>Dermatofitose:</strong> Proteção auxiliar recomendada em casos específicos.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <section class="schedule-section">
-                <h2>Calendário de Vacinação Básica</h2>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Idade do Pet</th>
-                                <th>Vacina Recomendada</th>
-                                <th>Observação</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>6 a 8 semanas</strong></td>
-                                <td>1ª Dose Múltipla (V8/V10 ou V4/V5)</td>
-                                <td>Primeira proteção do filhote</td>
-                            </tr>
-                            <tr>
-                                <td><strong>12 semanas</strong></td>
-                                <td>2ª Dose Múltipla</td>
-                                <td>Reforço de imunidade</td>
-                            </tr>
-                            <tr>
-                                <td><strong>16 semanas</strong></td>
-                                <td>3ª Dose Múltipla + Antirrábica</td>
-                                <td>Finalização do esquema inicial</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Anualmente</strong></td>
-                                <td>Reforço Anual (Múltipla + Antirrábica)</td>
-                                <td>Dose de manutenção para toda a vida</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="faq-section">
-                <h2>Perguntas Frequentes</h2>
-                <div class="faq-grid">
-                    <div class="faq-item">
-                        <h4><i class="fa-solid fa-circle-question"></i> Por que vacinar se o pet não sai de casa?</h4>
-                        <p>Nós podemos carregar vírus e bactérias na sola dos sapatos e nas roupas. A vacinação garante que o pet esteja imune mesmo sem contato direto com a rua.</p>
-                    </div>
-                    <div class="faq-item">
-                        <h4><i class="fa-solid fa-circle-question"></i> Quando o filhote pode passear na rua?</h4>
-                        <p>Apenas após tomar todas as doses das vacinas essenciais (geralmente por volta dos 4 meses de vida), para evitar contaminação por doenças fatais.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="cta-section">
-                <h2>Pronto para dar um lar a um novo amigo?</h2>
-                <p>Conheça os animais disponíveis e encontre o companheiro ideal para a sua família.</p>
-                <a href="index.html" class="btn-cta">Ver Pets Para Adoção</a>
-            </section>
-        </main>
-
-        <footer>
-            <p>&copy; 2026 PetAdote. Todos os direitos reservados.</p>
-        </footer>
-    </div>
-
-</body>
-</html>
+        </div>
+    </section>
+{% endblock %}

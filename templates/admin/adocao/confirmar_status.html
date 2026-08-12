@@ -1,0 +1,44 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">Início</a>
+        &rsaquo; <a href="{% url 'admin:adocao_solicitacaoadocao_changelist' %}">Solicitações de adoção</a>
+        &rsaquo; {{ title }}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="admin-confirm-card">
+        <div class="admin-confirm-heading">
+            <span class="admin-confirm-icon">{% if rejeitando %}!{% else %}✓{% endif %}</span>
+            <div>
+                <h1>{{ title }}</h1>
+                <p>Revise os dados antes de confirmar esta decisão.</p>
+            </div>
+        </div>
+
+        <dl class="admin-confirm-data">
+            <div><dt>Solicitação</dt><dd>#{{ solicitacao.id_solicitacao }}</dd></div>
+            <div><dt>Cliente</dt><dd>{{ solicitacao.cliente }}</dd></div>
+            <div><dt>Animal</dt><dd>{{ solicitacao.animal }}</dd></div>
+            <div><dt>Status atual</dt><dd>{{ solicitacao.get_status_display }}</dd></div>
+        </dl>
+
+        <form method="post" class="admin-confirm-form">
+            {% csrf_token %}
+            {% if form %}
+                {{ form.non_field_errors }}
+                <div class="admin-confirm-field">
+                    {{ form.motivo_rejeicao.label_tag }}
+                    {{ form.motivo_rejeicao }}
+                    {{ form.motivo_rejeicao.errors }}
+                </div>
+            {% endif %}
+            <div class="admin-confirm-actions">
+                <a href="{% url 'admin:adocao_solicitacaoadocao_changelist' %}" class="button admin-cancel-button">Cancelar</a>
+                <button type="submit" class="button {% if rejeitando %}admin-reject-button{% else %}default{% endif %}">{{ botao }}</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'animais/base_portal.html' %}
+
+{% block title %}Adotar {{ animal.nome }} | PetAdote{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{% url 'animais:detalhe' animal.id_animal %}">← Voltar para o perfil de {{ animal.nome }}</a>
+    <section class="form-layout">
+        <div>
+            <span class="eyebrow">Adoção responsável</span>
+            <h1>Solicitar adoção de {{ animal.nome }}</h1>
+            <p>Confira o compromisso abaixo antes de enviar a solicitação.</p>
+
+            <div class="term-box">
+                <h2>Termo de compromisso</h2>
+                <p>Declaro que assumirei a responsabilidade pelo bem-estar, alimentação, abrigo, cuidados veterinários e segurança do animal.</p>
+                <p>Estou ciente de que a solicitação será analisada pela equipe PetAdote e que o envio não garante a aprovação.</p>
+            </div>
+        </div>
+
+        <form method="post" class="request-form">
+            {% csrf_token %}
+            <h2>Confirmar solicitação</h2>
+            <dl class="compact-data">
+                <div><dt>Animal</dt><dd>{{ animal.nome }}</dd></div>
+                <div><dt>Solicitante</dt><dd>{{ user.nome_completo }}</dd></div>
+                <div><dt>E-mail</dt><dd>{{ user.email }}</dd></div>
+            </dl>
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <label class="checkbox-field" for="{{ form.aceita_termo.id_for_label }}">
+                {{ form.aceita_termo }}
+                <span>{{ form.aceita_termo.label }}</span>
+            </label>
+            {% for error in form.aceita_termo.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+
+            <button class="button button-large" type="submit">Enviar solicitação</button>
+        </form>
+    </section>
+{% endblock %}

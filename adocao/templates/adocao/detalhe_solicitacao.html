@@ -1,0 +1,29 @@
+{% extends 'animais/base_portal.html' %}
+
+{% block title %}Solicitação #{{ solicitacao.id_solicitacao }} | PetAdote{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{% url 'adocoes:minhas' %}">← Voltar para minhas solicitações</a>
+    <section class="request-detail">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Solicitação #{{ solicitacao.id_solicitacao }}</span>
+                <h1>Adoção de {{ solicitacao.animal.nome }}</h1>
+            </div>
+            <span class="status-badge status-{{ solicitacao.status|lower }}">{{ solicitacao.get_status_display }}</span>
+        </div>
+
+        <dl class="detail-data">
+            <div><dt>Data da solicitação</dt><dd>{{ solicitacao.data_solicitacao|date:"d/m/Y \à\s H:i" }}</dd></div>
+            <div><dt>Data da avaliação</dt><dd>{{ solicitacao.data_avaliacao|date:"d/m/Y \à\s H:i"|default:"Ainda não avaliada" }}</dd></div>
+            <div><dt>Avaliado por</dt><dd>{{ solicitacao.administrador_avaliador|default:"Ainda não definido" }}</dd></div>
+            {% if solicitacao.motivo_rejeicao %}
+                <div><dt>Motivo da rejeição</dt><dd>{{ solicitacao.motivo_rejeicao }}</dd></div>
+            {% endif %}
+        </dl>
+
+        <div class="detail-actions">
+            <a class="button button-secondary" href="{% url 'animais:detalhe' solicitacao.animal.id_animal %}">Ver perfil do animal</a>
+        </div>
+    </section>
+{% endblock %}

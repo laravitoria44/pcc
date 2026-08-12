@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'usuarios/auth.css' %}">
+{% endblock %}
+
+{% block main_class %}auth-main{% endblock %}
+
+{% block content %}
+    <section class="auth-wrap">
+        <div class="auth-aside">
+            <span class="eyebrow-ds">Área segura</span>
+            <h2>Seu próximo encontro começa aqui.</h2>
+            <p>Entre para consultar os animais e acompanhar suas solicitações com transparência.</p>
+            <ul>
+                <li>Históricos de saúde e vacinação</li>
+                <li>Solicitação de adoção responsável</li>
+                <li>Acompanhamento de cada etapa</li>
+            </ul>
+        </div>
+        <section class="auth-card">
+            {% block auth_content %}{% endblock %}
+        </section>
+    </section>
+{% endblock %}

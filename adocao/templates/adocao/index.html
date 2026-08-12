@@ -1,101 +1,49 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PetAdote - Encontre seu novo amigo</title>
-   <link rel="stylesheet" href="{% static 'style.css' %}">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+{% extends 'base.html' %}
 
-    <div class="site-container">
-        <header>
-            <div class="logo">
-                <i class="fa-solid fa-paw"></i>
-                <span>Pet<b>Adote</b></span>
-            </div>
-           <nav>
-    <ul>
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'sobre' %}">Sobre Nós</a></li>
-        <li><a href="{% url 'vacinacao' %}">Vacinação</a></li>
-        <li><a href="{% url 'quero_adotar' %}">Quero Adotar <i class="fa-solid fa-chevron-down nav-arrow"></i></a></li>
-        <li><a href="{% url 'contato' %}">Contato</a></li>
-    </ul>
-</nav>
-            <div class="header-actions">
-                <button class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <a href="#" class="btn-signup">Cadastrar</a>
-            </div>
-        </header>
+{% block title %}PetAdote | Encontre seu novo amigo{% endblock %}
 
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Encontre seu novo<br><span class="highlight">amigo de 4 patas</span></h1>
-                <p class="subtitle">Transforme uma vida e traga mais alegria para o seu lar. Milhares de cães e gatos estão à espera de uma família.</p>
-                
-                <div class="search-box">
-                    <input type="text" placeholder="Procure por raça">
-                    <button class="btn-search">Buscar</button>
-                </div>
-
-                <div class="features">
-                    <div class="feature-item">
-                        <i class="fa-solid fa-heart-pulse"></i>
-                        <span>Castrados & Vacinados</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fa-solid fa-user-doctor"></i>
-                        <span>Acompanhamento Veterinário</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fa-solid fa-shield-cat"></i>
-                        <span>Adoção Responsável</span>
-                    </div>
+{% block content %}
+    <section class="hero">
+        <div class="content-width hero-grid">
+            <div class="hero-copy">
+                <span class="eyebrow-ds">Adoção responsável</span>
+                <h1 class="display-title">Um novo começo para você e para eles.</h1>
+                <p class="lead">Conheça animais acolhidos, consulte seu histórico de saúde e acompanhe cada etapa da adoção com segurança e transparência.</p>
+                <div class="hero-actions">
+                    <a href="{% url 'quero_adotar' %}" class="ds-button">Conhecer os animais</a>
+                    <a href="{% url 'sobre' %}" class="ds-button ds-button-secondary">Como funciona</a>
                 </div>
             </div>
+            <div class="hero-visual">
+                <img src="https://i.pinimg.com/736x/20/c3/53/20c353885eba00e3e272ea21e10ed53e.jpg" alt="Cachorro aguardando uma família">
+                <div class="hero-badge">
+                    <strong>Adoção com cuidado</strong>
+                    <span>Perfis completos, saúde acompanhada e avaliação responsável.</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <div class="hero-image">
-                <img src="https://i.pinimg.com/736x/20/c3/53/20c353885eba00e3e272ea21e10ed53e.jpg" alt="Cão para adoção">
-            </div>
-        </section>
+    <section class="content-width section-compact" aria-label="Indicadores do PetAdote">
+        <div class="stats-grid">
+            <div class="stat"><strong>12 mil+</strong><span>Finais felizes</span></div>
+            <div class="stat"><strong>500+</strong><span>Protetores parceiros</span></div>
+            <div class="stat"><strong>1,5 mil+</strong><span>Animais acolhidos</span></div>
+            <div class="stat"><strong>100%</strong><span>Adoção responsável</span></div>
+        </div>
+    </section>
 
-        <section class="stats-bar">
-            <div class="stat-item">
-                <i class="fa-solid fa-house-chimney-window"></i>
-                <div>
-                    <h3>12K+</h3>
-                    <p>Finais Felizes</p>
-                </div>
+    <section class="surface-section section">
+        <div class="content-width">
+            <div class="section-heading-ds">
+                <div><span class="eyebrow-ds">Tudo em um só lugar</span><h2>Uma jornada simples e segura</h2></div>
+                <p>Informação clara para você decidir com tranquilidade e oferecer o lar que cada animal merece.</p>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <i class="fa-solid fa-hand-holding-heart"></i>
-                <div>
-                    <h3>500+</h3>
-                    <p>Protetores & ONGs</p>
-                </div>
+            <div class="feature-grid">
+                <article class="ds-card"><span class="ds-card-icon">01</span><h3>Conheça</h3><p>Filtre os animais e consulte perfil, temperamento, vacinação e saúde.</p></article>
+                <article class="ds-card"><span class="ds-card-icon">02</span><h3>Solicite</h3><p>Aceite o termo de compromisso e envie sua solicitação de adoção.</p></article>
+                <article class="ds-card"><span class="ds-card-icon">03</span><h3>Acompanhe</h3><p>Veja o status da análise diretamente na sua área de cliente.</p></article>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <i class="fa-solid fa-dog"></i>
-                <div>
-                    <h3>1.5K+</h3>
-                    <p>Pets Esperando</p>
-                </div>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <i class="fa-solid fa-users"></i>
-                <div>
-                    <h3>50K+</h3>
-                    <p>Visitas Mensais</p>
-                </div>
-            </div>
-        </section>
-    </div>
-
-</body>
-</html>
+        </div>
+    </section>
+{% endblock %}

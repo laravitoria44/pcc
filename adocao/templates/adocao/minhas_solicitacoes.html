@@ -1,0 +1,47 @@
+{% extends 'animais/base_portal.html' %}
+
+{% block title %}Minhas solicitações | PetAdote{% endblock %}
+
+{% block content %}
+    <section class="page-heading">
+        <div>
+            <span class="eyebrow">Acompanhamento</span>
+            <h1>Minhas solicitações</h1>
+            <p>Acompanhe o andamento das suas solicitações de adoção.</p>
+        </div>
+        <a class="button" href="{% url 'animais:lista' %}">Encontrar um animal</a>
+    </section>
+
+    {% if solicitacoes %}
+        <section class="request-list">
+            {% for solicitacao in solicitacoes %}
+                <article class="request-card">
+                    <div>
+                        <span class="eyebrow">Solicitação #{{ solicitacao.id_solicitacao }}</span>
+                        <h2>{{ solicitacao.animal.nome }}</h2>
+                        <p>Enviada em {{ solicitacao.data_solicitacao|date:"d/m/Y \à\s H:i" }}</p>
+                    </div>
+                    <div class="request-status">
+                        <span class="status-badge status-{{ solicitacao.status|lower }}">{{ solicitacao.get_status_display }}</span>
+                        <a href="{% url 'adocoes:detalhe' solicitacao.id_solicitacao %}">Ver detalhes</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <section class="empty-state">
+            <span>♡</span>
+            <h2>Você ainda não fez uma solicitação</h2>
+            <p>Conheça os animais disponíveis e encontre seu novo companheiro.</p>
+            <a class="button" href="{% url 'animais:lista' %}">Ver animais</a>
+        </section>
+    {% endif %}
+
+    {% if is_paginated %}
+        <nav class="pagination" aria-label="Paginação">
+            {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">Anterior</a>{% endif %}
+            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Próxima</a>{% endif %}
+        </nav>
+    {% endif %}
+{% endblock %}

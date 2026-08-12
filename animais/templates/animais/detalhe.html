@@ -1,0 +1,92 @@
+{% extends 'animais/base_portal.html' %}
+
+{% block title %}{{ animal.nome }} | PetAdote{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{% url 'animais:lista' %}">← Voltar para animais</a>
+
+    <section class="animal-profile">
+        <div class="profile-gallery">
+            {% with foto=animal.fotos.all|first %}
+                {% if foto %}
+                    <img src="{{ foto.url_foto }}" alt="{{ foto.descricao }}">
+                {% else %}
+                    <div class="image-placeholder large" aria-label="Animal sem foto">🐾</div>
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="profile-summary">
+            <span class="status-badge">{{ animal.status }}</span>
+            <h1>{{ animal.nome }}</h1>
+            <p class="profile-subtitle">{{ animal.especie }} · {{ animal.raca }}</p>
+
+            <dl class="facts-grid">
+                <div><dt>Sexo</dt><dd>{{ animal.sexo }}</dd></div>
+                <div><dt>Porte</dt><dd>{{ animal.porte }}</dd></div>
+                <div><dt>Peso</dt><dd>{{ animal.peso }} kg</dd></div>
+                <div><dt>Pelagem</dt><dd>{{ animal.cor_pelagem }}</dd></div>
+                <div><dt>Nascimento</dt><dd>{{ animal.data_de_nascimento|date:"d/m/Y" }}</dd></div>
+                <div><dt>Castrado</dt><dd>{{ animal.castracao|yesno:"Sim,Não" }}</dd></div>
+            </dl>
+
+            <div class="temperament">
+                <h2>Temperamento</h2>
+                <p>{{ animal.descricao_temperamento }}</p>
+            </div>
+
+            {% if not cliente_consultando %}
+                <div class="notice">
+                    Você está consultando este perfil como administrador.
+                    <a href="{% url 'admin:animais_animal_change' animal.id_animal %}">Editar animal na administração</a>
+                </div>
+            {% elif solicitacao_ativa %}
+                <div class="notice">
+                    Você já possui uma solicitação {{ solicitacao_ativa.get_status_display|lower }} para {{ animal.nome }}.
+                    <a href="{% url 'adocoes:detalhe' solicitacao_ativa.id_solicitacao %}">Acompanhar solicitação</a>
+                </div>
+            {% elif animal_disponivel %}
+                <a class="button button-large" href="{% url 'adocoes:criar' animal.id_animal %}">Solicitar adoção</a>
+            {% else %}
+                <p class="notice">Este animal não está disponível para novas solicitações no momento.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="history-grid">
+        <article class="history-card">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">Proteção</span>
+                    <h2>Vacinação</h2>
+                </div>
+                <a href="{% url 'animais:vacinacoes' animal.id_animal %}">Ver histórico completo</a>
+            </div>
+            {% for vacinacao in animal.vacinacoes.all|slice:":3" %}
+                <div class="history-row">
+                    <div><strong>{{ vacinacao.vacina.nome_vacina }}</strong><span>{{ vacinacao.dose }}</span></div>
+                    <time>{{ vacinacao.data_aplicacao|date:"d/m/Y" }}</time>
+                </div>
+            {% empty %}
+                <p class="muted">Nenhuma vacinação registrada.</p>
+            {% endfor %}
+        </article>
+
+        <article class="history-card">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">Bem-estar</span>
+                    <h2>Saúde</h2>
+                </div>
+                <a href="{% url 'animais:saude' animal.id_animal %}">Ver histórico completo</a>
+            </div>
+            {% for condicao in animal.condicoes_saude.all|slice:":3" %}
+                <div class="history-row">
+                    <div><strong>{{ condicao.tipo_condicao }}</strong><span>{{ condicao.status }}</span></div>
+                    <time>{{ condicao.data_diagnostico|date:"d/m/Y" }}</time>
+                </div>
+            {% empty %}
+                <p class="muted">Nenhuma condição de saúde registrada.</p>
+            {% endfor %}
+        </article>
+    </section>
+{% endblock %}

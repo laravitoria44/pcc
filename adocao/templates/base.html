@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#123d27">
+    <title>{% block title %}PetAdote{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'design-system.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <a class="skip-link" href="#conteudo-principal">Ir para o conteúdo</a>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="{% url 'home' %}" class="site-brand" aria-label="PetAdote — página inicial">
+                <span class="brand-mark" aria-hidden="true">P</span>
+                <span>Pet<strong>Adote</strong></span>
+            </a>
+
+            <nav class="main-nav" aria-label="Navegação principal">
+                <a href="{% url 'home' %}">Início</a>
+                <a href="{% url 'quero_adotar' %}">Animais</a>
+                <a href="{% url 'vacinacao' %}">Vacinação</a>
+                <a href="{% url 'sobre' %}">Sobre</a>
+                <a href="{% url 'contato' %}">Contato</a>
+            </nav>
+
+            <div class="account-nav">
+                {% if user.is_authenticated %}
+                    {% if user.perfil == 'CLIENTE' %}
+                        <a href="{% url 'adocoes:minhas' %}" class="header-link header-client">Minhas adoções</a>
+                    {% endif %}
+                    {% if user.is_staff %}
+                        <a href="{% url 'admin:index' %}" class="header-link header-admin">Administração</a>
+                    {% endif %}
+                    <a href="{% url 'usuarios:perfil' %}" class="profile-chip" title="Abrir meu perfil">
+                        <span class="profile-avatar">{{ user.get_short_name|first|upper }}</span>
+                        <span>Olá, {{ user.get_short_name }}</span>
+                    </a>
+                    <form method="post" action="{% url 'usuarios:logout' %}" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="button-link danger-link">Sair</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'usuarios:login' %}" class="header-link header-login">Entrar</a>
+                    <a href="{% url 'usuarios:cadastro' %}" class="ds-button ds-button-small">Cadastrar</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% if messages %}
+        <div class="global-messages" aria-live="polite">
+            {% for message in messages %}
+                <p class="global-message global-message-{{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main id="conteudo-principal" class="site-main {% block main_class %}{% endblock %}">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>
+                <a href="{% url 'home' %}" class="site-brand footer-brand">
+                    <span class="brand-mark" aria-hidden="true">P</span>
+                    <span>Pet<strong>Adote</strong></span>
+                </a>
+                <p>Adoção responsável, cuidado e transparência em cada encontro.</p>
+            </div>
+            <nav aria-label="Links do rodapé">
+                <a href="{% url 'quero_adotar' %}">Encontrar um animal</a>
+                <a href="{% url 'vacinacao' %}">Guia de vacinação</a>
+                <a href="{% url 'contato' %}">Fale conosco</a>
+            </nav>
+            <p class="footer-copy">&copy; 2026 PetAdote<br>Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

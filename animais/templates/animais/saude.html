@@ -1,0 +1,32 @@
+{% extends 'animais/base_portal.html' %}
+
+{% block title %}Saúde de {{ animal.nome }} | PetAdote{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{% url 'animais:detalhe' animal.id_animal %}">← Voltar para o perfil de {{ animal.nome }}</a>
+    <section class="page-heading">
+        <div>
+            <span class="eyebrow">Histórico clínico</span>
+            <h1>Saúde de {{ animal.nome }}</h1>
+            <p>Acompanhe diagnósticos, gravidade e evolução das condições registradas.</p>
+        </div>
+    </section>
+
+    <div class="timeline">
+        {% for condicao in animal.condicoes_saude.all %}
+            <article class="timeline-item">
+                <time>{{ condicao.data_diagnostico|date:"d/m/Y" }}</time>
+                <div>
+                    <div class="card-heading">
+                        <h2>{{ condicao.tipo_condicao }}</h2>
+                        <span class="status-badge">{{ condicao.status }}</span>
+                    </div>
+                    <p>{{ condicao.descricao }}</p>
+                    <span class="muted">Gravidade: {{ condicao.gravidade }}</span>
+                </div>
+            </article>
+        {% empty %}
+            <section class="empty-state"><span>💚</span><h2>Nenhuma condição registrada</h2><p>O histórico de saúde está vazio.</p></section>
+        {% endfor %}
+    </div>
+{% endblock %}

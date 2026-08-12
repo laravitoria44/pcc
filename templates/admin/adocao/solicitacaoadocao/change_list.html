@@ -1,0 +1,42 @@
+{% extends "admin/change_list.html" %}
+
+{% block result_list %}
+    <div class="admin-selection-toolbar" data-selection-toolbar>
+        <div>
+            <strong>Ações das solicitações marcadas</strong>
+            <span data-selection-label>Marque ao menos uma solicitação na tabela.</span>
+        </div>
+        <div class="admin-selection-buttons">
+            <input type="hidden" name="index" value="0">
+            <button type="submit" name="action" value="aprovar_solicitacoes" class="button admin-bulk-approve" disabled>
+                Aprovar selecionadas
+            </button>
+            <button type="submit" name="action" value="rejeitar_solicitacoes" class="button admin-bulk-reject" disabled>
+                Rejeitar selecionadas
+            </button>
+        </div>
+    </div>
+    {{ block.super }}
+    <script>
+        (() => {
+            const form = document.getElementById('changelist-form');
+            const toolbar = document.querySelector('[data-selection-toolbar]');
+            if (!form || !toolbar) return;
+
+            const buttons = toolbar.querySelectorAll('button');
+            const label = toolbar.querySelector('[data-selection-label]');
+            const updateToolbar = () => {
+                const count = form.querySelectorAll('input.action-select:checked').length;
+                buttons.forEach((button) => { button.disabled = count === 0; });
+                label.textContent = count
+                    ? `${count} solicitação(ões) selecionada(s).`
+                    : 'Marque ao menos uma solicitação na tabela.';
+            };
+
+            form.addEventListener('change', (event) => {
+                if (event.target.matches('input[type="checkbox"]')) updateToolbar();
+            });
+            updateToolbar();
+        })();
+    </script>
+{% endblock %}

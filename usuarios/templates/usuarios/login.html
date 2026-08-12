@@ -1,0 +1,31 @@
+{% extends 'usuarios/base_auth.html' %}
+
+{% block title %}Entrar | PetAdote{% endblock %}
+
+{% block auth_content %}
+    <h1>Bem-vindo de volta</h1>
+    <p class="auth-intro">Entre para acompanhar suas solicitações de adoção.</p>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <button type="submit" class="auth-submit">Entrar</button>
+    </form>
+
+    <p class="auth-switch">
+        Ainda não possui uma conta?
+        <a href="{% url 'usuarios:cadastro' %}">Cadastre-se</a>
+    </p>
+{% endblock %}

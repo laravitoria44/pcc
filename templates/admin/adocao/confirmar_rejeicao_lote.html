@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">Início</a>
+        &rsaquo; <a href="{% url 'admin:adocao_solicitacaoadocao_changelist' %}">Solicitações de adoção</a>
+        &rsaquo; Rejeitar selecionadas
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="admin-confirm-card">
+        <div class="admin-confirm-heading">
+            <span class="admin-confirm-icon">!</span>
+            <div>
+                <h1>Rejeitar solicitações selecionadas</h1>
+                <p>O mesmo motivo será registrado em todas as solicitações abaixo.</p>
+            </div>
+        </div>
+
+        <ul class="admin-selected-list">
+            {% for solicitacao in solicitacoes %}
+                <li><strong>#{{ solicitacao.id_solicitacao }}</strong> — {{ solicitacao.cliente }} / {{ solicitacao.animal }}</li>
+            {% endfor %}
+        </ul>
+
+        <form method="post" action="{% url 'admin:adocao_solicitacaoadocao_changelist' %}" class="admin-confirm-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="rejeitar_solicitacoes">
+            <input type="hidden" name="confirmar_rejeicao" value="1">
+            <input type="hidden" name="select_across" value="{{ select_across }}">
+            {% for solicitacao in solicitacoes %}
+                <input type="hidden" name="{{ action_checkbox_name }}" value="{{ solicitacao.pk }}">
+            {% endfor %}
+
+            <div class="admin-confirm-field">
+                {{ form.motivo_rejeicao.label_tag }}
+                {{ form.motivo_rejeicao }}
+                {{ form.motivo_rejeicao.errors }}
+            </div>
+            <div class="admin-confirm-actions">
+                <a href="{% url 'admin:adocao_solicitacaoadocao_changelist' %}" class="button admin-cancel-button">Cancelar</a>
+                <button type="submit" class="button admin-reject-button">Confirmar rejeição</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
