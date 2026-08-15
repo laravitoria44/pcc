@@ -1,0 +1,39 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Início</a>
+    &rsaquo; <a href="{{ url_lista }}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; Detalhes
+</div>
+{% endblock %}
+
+{% block content %}
+<main class="admin-detail-page">
+    <header class="admin-detail-heading">
+        <div>
+            <span class="admin-detail-eyebrow">{{ opts.verbose_name|capfirst }}</span>
+            <h1>{{ registro }}</h1>
+            <p>Visualização completa dos dados deste registro.</p>
+        </div>
+        <a class="admin-cancel-button button" href="{{ url_lista }}">Voltar à lista</a>
+    </header>
+
+    <section class="admin-detail-card" aria-label="Dados do registro">
+        <dl class="admin-detail-grid">
+            {% for campo in campos %}
+                <div>
+                    <dt>{{ campo.rotulo|capfirst }}</dt>
+                    <dd>{{ campo.valor }}</dd>
+                </div>
+            {% endfor %}
+        </dl>
+    </section>
+
+    <div class="admin-detail-actions">
+        {% if pode_excluir %}<a class="button admin-detail-delete" href="{{ url_excluir }}">Excluir</a>{% endif %}
+        {% if pode_modificar %}<a class="button default" href="{{ url_modificar }}">Modificar registro</a>{% endif %}
+    </div>
+</main>
+{% endblock %}

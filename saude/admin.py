@@ -14,12 +14,14 @@ class CondicaoSaudeAdmin(BotaoModificarAdminMixin, admin.ModelAdmin):
         'data_diagnostico',
         'gravidade',
         'status',
+        'botao_detalhes',
         'botao_modificar',
         'botao_excluir',
     )
     list_filter = ('tipo_condicao', 'gravidade', 'status', 'data_diagnostico')
     search_fields = ('animal__nome', 'tipo_condicao', 'descricao')
     autocomplete_fields = ('animal', 'administrador')
+    list_select_related = ('animal', 'administrador')
 
 
 @admin.register(Vacina)
@@ -28,6 +30,7 @@ class VacinaAdmin(BotaoModificarAdminMixin, admin.ModelAdmin):
         'id_vacina',
         'nome_vacina',
         'especie_alvo',
+        'botao_detalhes',
         'botao_modificar',
         'botao_excluir',
     )
@@ -44,9 +47,11 @@ class VacinacaoAdmin(BotaoModificarAdminMixin, admin.ModelAdmin):
         'data_aplicacao',
         'data_proxima_dose',
         'dose',
+        'botao_detalhes',
         'botao_modificar',
         'botao_excluir',
     )
     list_filter = ('vacina', 'data_aplicacao', 'data_proxima_dose', 'fabricante')
     search_fields = ('animal__nome', 'vacina__nome_vacina', 'fabricante', 'dose')
     autocomplete_fields = ('animal', 'vacina', 'administrador')
+    list_select_related = ('animal', 'vacina', 'administrador')

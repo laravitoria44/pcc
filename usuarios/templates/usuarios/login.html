@@ -21,6 +21,7 @@
         {% endfor %}
 
         {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <a class="forgot-password" href="{% url 'usuarios:password_reset' %}">Esqueci minha senha</a>
         <button type="submit" class="auth-submit">Entrar</button>
     </form>
 

@@ -1,5 +1,4 @@
 {% extends 'animais/base_portal.html' %}
-
 {% block title %}{{ animal.nome }} | PetAdote{% endblock %}
 
 {% block content %}
@@ -8,10 +7,10 @@
     <section class="animal-profile">
         <div class="profile-gallery">
             {% with foto=animal.fotos.all|first %}
-                {% if foto %}
-                    <img src="{{ foto.url_foto }}" alt="{{ foto.descricao }}">
+                {% if foto and foto.imagem_url %}
+                    <img src="{{ foto.imagem_url }}" alt="{{ foto.descricao|default:animal.nome }}">
                 {% else %}
-                    <div class="image-placeholder large" aria-label="Animal sem foto">🐾</div>
+                    <span class="image-placeholder large" role="img" aria-label="Animal sem imagem">♡</span>
                 {% endif %}
             {% endwith %}
         </div>

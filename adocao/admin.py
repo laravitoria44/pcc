@@ -6,13 +6,14 @@ from django.db import transaction
 from django.http import Http404, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
+from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 
 from animais.models import Animal
 from setup.admin_utils import BotaoModificarAdminMixin
 
 from .forms import RejeitarSolicitacaoAdminForm
-from .models import SolicitacaoAdocao
+from .models import Contato, SolicitacaoAdocao
 from .services import (
     STATUS_ANIMAL_DISPONIVEL,
     SolicitacaoNaoPodeSerAprovada,
@@ -20,6 +21,110 @@ from .services import (
     aprovar_solicitacao,
     rejeitar_solicitacao,
 )
+
+
+@admin.register(Contato)
+class ContatoAdmin(admin.ModelAdmin):
+    list_display = (
+        'lida',
+        'assunto_exibicao',
+        'nome',
+        'email',
+        'data_envio',
+        'botao_ler',
+        'botao_excluir',
+    )
+    list_filter = ('lida', 'data_envio')
+    search_fields = ('nome', 'email', 'telefone', 'assunto', 'mensagem')
+    ordering = ('lida', '-data_envio')
+    list_display_links = None
+    readonly_fields = (
+        'remetente',
+        'nome',
+        'email',
+        'telefone',
+        'assunto',
+        'mensagem',
+        'data_envio',
+        'lida',
+        'data_leitura',
+    )
+    actions = ('marcar_como_lidas', 'marcar_como_nao_lidas')
+
+    def has_add_permission(self, request):
+        return False
+
+    @admin.display(description='Assunto')
+    def assunto_exibicao(self, contato):
+        return contato.assunto or '(Sem assunto)'
+
+    @admin.display(description='Ler')
+    def botao_ler(self, contato):
+        url = reverse('admin:adocao_contato_ler', args=(contato.pk,))
+        rotulo = 'Abrir' if contato.lida else 'Ler mensagem'
+        classe = 'admin-row-action admin-row-details'
+        if not contato.lida:
+            classe += ' admin-row-unread'
+        return format_html('<a class="{}" href="{}">{}</a>', classe, url, rotulo)
+
+    @admin.display(description='Excluir')
+    def botao_excluir(self, contato):
+        url = reverse('admin:adocao_contato_delete', args=(contato.pk,))
+        return format_html(
+            '<a class="admin-row-action admin-row-delete" href="{}">Excluir</a>',
+            url,
+        )
+
+    @admin.action(description='Marcar mensagens selecionadas como lidas')
+    def marcar_como_lidas(self, request, queryset):
+        quantidade = queryset.filter(lida=False).update(
+            lida=True,
+            data_leitura=timezone.now(),
+        )
+        self.message_user(request, f'{quantidade} mensagem(ns) marcada(s) como lida(s).')
+
+    @admin.action(description='Marcar mensagens selecionadas como não lidas')
+    def marcar_como_nao_lidas(self, request, queryset):
+        quantidade = queryset.filter(lida=True).update(lida=False, data_leitura=None)
+        self.message_user(
+            request,
+            f'{quantidade} mensagem(ns) marcada(s) como não lida(s).',
+        )
+
+    def get_urls(self):
+        urls = super().get_urls()
+        return [
+            path(
+                '<path:object_id>/ler/',
+                self.admin_site.admin_view(self.ler_view),
+                name='adocao_contato_ler',
+            ),
+        ] + urls
+
+    def ler_view(self, request, object_id):
+        contato = self.get_object(request, object_id)
+        if contato is None:
+            raise Http404('Mensagem não encontrada.')
+        if not self.has_view_or_change_permission(request, contato):
+            raise PermissionDenied
+
+        if not contato.lida and self.has_change_permission(request, contato):
+            contato.lida = True
+            contato.data_leitura = timezone.now()
+            contato.save(update_fields=('lida', 'data_leitura'))
+
+        contexto = {
+            **self.admin_site.each_context(request),
+            'title': contato.assunto or f'Mensagem de {contato.nome}',
+            'opts': self.model._meta,
+            'original': contato,
+            'contato': contato,
+            'url_lista': reverse('admin:adocao_contato_changelist'),
+            'url_excluir': reverse('admin:adocao_contato_delete', args=(contato.pk,)),
+            'pode_excluir': self.has_delete_permission(request, contato),
+        }
+        request.current_app = self.admin_site.name
+        return TemplateResponse(request, 'admin/adocao/contato/ler.html', contexto)
 
 
 @admin.register(SolicitacaoAdocao)
@@ -32,6 +137,7 @@ class SolicitacaoAdocaoAdmin(BotaoModificarAdminMixin, admin.ModelAdmin):
         'status',
         'administrador_avaliador',
         'acoes_visiveis',
+        'botao_detalhes',
         'botao_modificar',
         'botao_excluir',
     )
@@ -43,6 +149,7 @@ class SolicitacaoAdocaoAdmin(BotaoModificarAdminMixin, admin.ModelAdmin):
         'motivo_rejeicao',
     )
     autocomplete_fields = ('cliente', 'animal', 'administrador_avaliador')
+    list_select_related = ('cliente', 'animal', 'administrador_avaliador')
     readonly_fields = (
         'status',
         'administrador_avaliador',

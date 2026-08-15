@@ -20,18 +20,41 @@ class UsuarioCadastroForm(UserCreationForm):
 
     class Meta:
         model = Usuario
-        fields = ('nome_completo', 'cpf', 'email', 'telefone')
+        fields = (
+            'nome_completo',
+            'cpf',
+            'email',
+            'telefone',
+            'arquivo_foto_perfil',
+            'vinculo_if_baiano',
+            'matricula_institucional',
+        )
         labels = {
             'nome_completo': 'Nome completo',
             'cpf': 'CPF',
             'email': 'E-mail',
             'telefone': 'Telefone',
+            'arquivo_foto_perfil': 'Foto de perfil (opcional)',
+            'vinculo_if_baiano': 'Sou do IF Baiano Campus Guanambi',
+            'matricula_institucional': 'Matrícula institucional',
         }
         widgets = {
             'nome_completo': forms.TextInput(attrs={'autocomplete': 'name'}),
             'cpf': forms.TextInput(attrs={'autocomplete': 'off', 'inputmode': 'numeric'}),
             'email': forms.EmailInput(attrs={'autocomplete': 'email'}),
             'telefone': forms.TextInput(attrs={'autocomplete': 'tel'}),
+            'arquivo_foto_perfil': forms.ClearableFileInput(
+                attrs={'accept': 'image/*'}
+            ),
+            'vinculo_if_baiano': forms.CheckboxInput(
+                attrs={
+                    'aria-controls': 'matricula-institucional-field',
+                    'aria-expanded': 'false',
+                }
+            ),
+            'matricula_institucional': forms.TextInput(
+                attrs={'autocomplete': 'off', 'placeholder': 'Informe sua matrícula'}
+            ),
         }
 
     def clean_cpf(self):
@@ -42,6 +65,23 @@ class UsuarioCadastroForm(UserCreationForm):
 
     def clean_email(self):
         return Usuario.objects.normalize_email(self.cleaned_data['email']).lower()
+
+    def clean(self):
+        dados = super().clean()
+        possui_vinculo = dados.get('vinculo_if_baiano', False)
+        matricula = dados.get('matricula_institucional', '').strip()
+
+        if possui_vinculo and not matricula:
+            self.add_error(
+                'matricula_institucional',
+                'Informe a matrícula institucional do IF Baiano.',
+            )
+        if not possui_vinculo:
+            dados['matricula_institucional'] = ''
+        else:
+            dados['matricula_institucional'] = matricula
+
+        return dados
 
     def save(self, commit=True):
         usuario = super().save(commit=False)
@@ -71,6 +111,9 @@ class UsuarioAdminCreationForm(UserCreationForm):
             'nome_completo',
             'cpf',
             'telefone',
+            'arquivo_foto_perfil',
+            'vinculo_if_baiano',
+            'matricula_institucional',
             'perfil',
             'is_active',
         )

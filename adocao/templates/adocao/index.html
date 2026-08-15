@@ -3,40 +3,118 @@
 {% block title %}PetAdote | Encontre seu novo amigo{% endblock %}
 
 {% block content %}
-    <section class="hero">
+    <section class="hero figma-hero">
         <div class="content-width hero-grid">
             <div class="hero-copy">
-                <span class="eyebrow-ds">Adoção responsável</span>
-                <h1 class="display-title">Um novo começo para você e para eles.</h1>
-                <p class="lead">Conheça animais acolhidos, consulte seu histórico de saúde e acompanhe cada etapa da adoção com segurança e transparência.</p>
+                <span class="eyebrow-ds">Encontre seu novo melhor amigo</span>
+                <h1 class="display-title">Adote um amor que transforma vidas.</h1>
+                <p class="lead">Milhares de cães e gatos estão esperando por um lar responsável. Nossa plataforma conecta você a animais acolhidos com segurança e acompanhamento completo.</p>
                 <div class="hero-actions">
-                    <a href="{% url 'quero_adotar' %}" class="ds-button">Conhecer os animais</a>
+                    <a href="{% url 'quero_adotar' %}" class="ds-button">Quero adotar</a>
                     <a href="{% url 'sobre' %}" class="ds-button ds-button-secondary">Como funciona</a>
+                </div>
+                <div class="hero-stats" aria-label="Indicadores do PetAdote">
+                    <div><strong>12.400+</strong><span>Pets adotados</span></div>
+                    <div><strong>450+</strong><span>Abrigos parceiros</span></div>
                 </div>
             </div>
             <div class="hero-visual">
-                <img src="https://i.pinimg.com/736x/20/c3/53/20c353885eba00e3e272ea21e10ed53e.jpg" alt="Cachorro aguardando uma família">
-                <div class="hero-badge">
-                    <strong>Adoção com cuidado</strong>
-                    <span>Perfis completos, saúde acompanhada e avaliação responsável.</span>
-                </div>
+                {% if animais_carrossel %}
+                    <section class="hero-carousel" data-hero-carousel aria-roledescription="carrossel" aria-label="Animais cadastrados no PetAdote">
+                        <div class="hero-slides" aria-live="off">
+                            {% for animal in animais_carrossel %}
+                                {% with foto=animal.fotos.all|first %}
+                                    <article class="hero-slide{% if forloop.first %} is-active{% endif %}" data-carousel-slide aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}">
+                                        {% if foto and foto.imagem_url %}
+                                            <img src="{{ foto.imagem_url }}" alt="{{ foto.descricao|default:animal.nome }}">
+                                        {% else %}
+                                            <span class="hero-slide-placeholder" role="img" aria-label="{{ animal.nome }} ainda não possui foto">♡</span>
+                                        {% endif %}
+                                        <a class="hero-badge" href="{% url 'animais:detalhe' animal.id_animal %}" {% if not forloop.first %}tabindex="-1"{% endif %}>
+                                            {% if foto and foto.imagem_url %}
+                                                <img src="{{ foto.imagem_url }}" alt="">
+                                            {% else %}
+                                                <span class="hero-badge-avatar">{{ animal.nome|first|upper }}</span>
+                                            {% endif %}
+                                            <div><strong>{{ animal.nome }}</strong><small>{{ animal.raca }}</small><span>{{ animal.status }}</span></div>
+                                        </a>
+                                    </article>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+                        {% if animais_carrossel|length > 1 %}
+                            <button class="hero-carousel-arrow hero-carousel-previous" type="button" data-carousel-previous aria-label="Animal anterior">‹</button>
+                            <button class="hero-carousel-arrow hero-carousel-next" type="button" data-carousel-next aria-label="Próximo animal">›</button>
+                            <div class="hero-carousel-dots" role="tablist" aria-label="Selecionar animal">
+                                {% for animal in animais_carrossel %}<button type="button" data-carousel-dot data-slide-index="{{ forloop.counter0 }}" class="{% if forloop.first %}is-active{% endif %}" aria-label="Mostrar {{ animal.nome }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"></button>{% endfor %}
+                            </div>
+                        {% endif %}
+                    </section>
+                {% else %}
+                    <div class="hero-carousel-empty"><span>♡</span><strong>Novos amigos chegarão em breve</strong><small>Cadastre animais para exibi-los aqui.</small></div>
+                {% endif %}
             </div>
         </div>
     </section>
 
-    <section class="content-width section-compact" aria-label="Indicadores do PetAdote">
-        <div class="stats-grid">
-            <div class="stat"><strong>12 mil+</strong><span>Finais felizes</span></div>
-            <div class="stat"><strong>500+</strong><span>Protetores parceiros</span></div>
-            <div class="stat"><strong>1,5 mil+</strong><span>Animais acolhidos</span></div>
-            <div class="stat"><strong>100%</strong><span>Adoção responsável</span></div>
-        </div>
-    </section>
+    {% if animais_carrossel|length > 1 %}
+    <script>
+        (() => {
+            const carousel = document.querySelector('[data-hero-carousel]');
+            if (!carousel) return;
+
+            const slides = [...carousel.querySelectorAll('[data-carousel-slide]')];
+            const dots = [...carousel.querySelectorAll('[data-carousel-dot]')];
+            const previous = carousel.querySelector('[data-carousel-previous]');
+            const next = carousel.querySelector('[data-carousel-next]');
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            let current = 0;
+            let timer;
+
+            const showSlide = (index) => {
+                current = (index + slides.length) % slides.length;
+                slides.forEach((slide, position) => {
+                    const active = position === current;
+                    slide.classList.toggle('is-active', active);
+                    slide.setAttribute('aria-hidden', String(!active));
+                    const link = slide.querySelector('a');
+                    if (link) link.tabIndex = active ? 0 : -1;
+                });
+                dots.forEach((dot, position) => {
+                    const active = position === current;
+                    dot.classList.toggle('is-active', active);
+                    dot.setAttribute('aria-selected', String(active));
+                });
+            };
+
+            const stop = () => window.clearInterval(timer);
+            const start = () => {
+                stop();
+                if (!reducedMotion && !document.hidden) {
+                    timer = window.setInterval(() => showSlide(current + 1), 5000);
+                }
+            };
+
+            previous?.addEventListener('click', () => { showSlide(current - 1); start(); });
+            next?.addEventListener('click', () => { showSlide(current + 1); start(); });
+            dots.forEach((dot) => dot.addEventListener('click', () => {
+                showSlide(Number(dot.dataset.slideIndex));
+                start();
+            }));
+            carousel.addEventListener('mouseenter', stop);
+            carousel.addEventListener('mouseleave', start);
+            carousel.addEventListener('focusin', stop);
+            carousel.addEventListener('focusout', start);
+            document.addEventListener('visibilitychange', start);
+            start();
+        })();
+    </script>
+    {% endif %}
 
     <section class="surface-section section">
         <div class="content-width">
             <div class="section-heading-ds">
-                <div><span class="eyebrow-ds">Tudo em um só lugar</span><h2>Uma jornada simples e segura</h2></div>
+                <div><span class="eyebrow-ds">Como funciona</span><h2>Uma jornada simples e segura</h2></div>
                 <p>Informação clara para você decidir com tranquilidade e oferecer o lar que cada animal merece.</p>
             </div>
             <div class="feature-grid">

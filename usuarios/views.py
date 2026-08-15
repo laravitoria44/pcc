@@ -18,7 +18,7 @@ def cadastro(request):
         return redirect('usuarios:perfil')
 
     if request.method == 'POST':
-        form = UsuarioCadastroForm(request.POST)
+        form = UsuarioCadastroForm(request.POST, request.FILES)
         if form.is_valid():
             usuario = form.save()
             login(request, usuario)

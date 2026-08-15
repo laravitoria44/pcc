@@ -6,19 +6,34 @@
     <h1>Crie sua conta</h1>
     <p class="auth-intro">Cadastre-se para solicitar a adoção do seu novo amigo.</p>
 
-    <form method="post" class="auth-form">
+    <form method="post" enctype="multipart/form-data" class="auth-form">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <div class="form-errors">{{ form.non_field_errors }}</div>
         {% endif %}
 
         {% for field in form %}
-            <div class="form-field">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}<div class="help-text">{{ field.help_text|safe }}</div>{% endif %}
-                {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
-            </div>
+            {% if field.name == 'vinculo_if_baiano' %}
+                <div class="form-field form-checkbox">
+                    {{ field }}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+            {% elif field.name == 'matricula_institucional' %}
+                <div id="matricula-institucional-field" class="form-field conditional-field{% if not form.vinculo_if_baiano.value %} is-hidden{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<div class="help-text">{{ field.help_text|safe }}</div>{% endif %}
+                    {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+            {% else %}
+                <div class="form-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<div class="help-text">{{ field.help_text|safe }}</div>{% endif %}
+                    {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+            {% endif %}
         {% endfor %}
 
         <button type="submit" class="auth-submit">Criar conta</button>
@@ -28,4 +43,26 @@
         Já possui uma conta?
         <a href="{% url 'usuarios:login' %}">Entrar</a>
     </p>
+
+    <noscript><style>#matricula-institucional-field { display: grid !important; }</style></noscript>
+    <script>
+        (() => {
+            const checkbox = document.getElementById('id_vinculo_if_baiano');
+            const container = document.getElementById('matricula-institucional-field');
+            const matricula = document.getElementById('id_matricula_institucional');
+
+            if (!checkbox || !container || !matricula) return;
+
+            const atualizarCampoMatricula = () => {
+                const possuiVinculo = checkbox.checked;
+                container.classList.toggle('is-hidden', !possuiVinculo);
+                matricula.disabled = !possuiVinculo;
+                matricula.required = possuiVinculo;
+                checkbox.setAttribute('aria-expanded', String(possuiVinculo));
+            };
+
+            checkbox.addEventListener('change', atualizarCampoMatricula);
+            atualizarCampoMatricula();
+        })();
+    </script>
 {% endblock %}

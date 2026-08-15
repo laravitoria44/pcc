@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
 
 class Animal(models.Model):
@@ -35,12 +37,43 @@ class FotoAnimal(models.Model):
         db_column='id_animal',
     )
     descricao = models.TextField()
-    url_foto = models.URLField(max_length=500)
+    url_foto = models.URLField(
+        'URL da imagem',
+        max_length=500,
+        blank=True,
+        help_text='Informe uma URL ou envie um arquivo abaixo.',
+    )
+    arquivo_imagem = models.ImageField(
+        'Upload da imagem',
+        upload_to='animais/',
+        blank=True,
+        help_text='Quando preenchido, o arquivo enviado tem prioridade sobre a URL.',
+    )
 
     class Meta:
         db_table = 'foto_animal'
         verbose_name = 'foto do animal'
         verbose_name_plural = 'fotos dos animais'
+        ordering = ('id_foto',)
+        constraints = (
+            models.CheckConstraint(
+                condition=~Q(url_foto='') | ~Q(arquivo_imagem=''),
+                name='foto_animal_url_ou_upload',
+            ),
+        )
 
     def __str__(self):
         return f'Foto de {self.animal}'
+
+    def clean(self):
+        super().clean()
+        if not self.url_foto and not self.arquivo_imagem:
+            raise ValidationError(
+                'Informe a URL da imagem ou selecione um arquivo para upload.'
+            )
+
+    @property
+    def imagem_url(self):
+        if self.arquivo_imagem:
+            return self.arquivo_imagem.url
+        return self.url_foto

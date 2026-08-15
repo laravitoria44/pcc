@@ -3,6 +3,7 @@
 {% block title %}Meu perfil | PetAdote{% endblock %}
 
 {% block auth_content %}
+    {% if user.foto_perfil_url %}<img class="profile-photo" src="{{ user.foto_perfil_url }}" alt="Foto de perfil de {{ user.get_short_name }}">{% endif %}
     <h1>Olá, {{ user.get_short_name }}</h1>
     <p class="auth-intro">Você está autenticado no PetAdote.</p>
 
@@ -11,6 +12,8 @@
         <div><dt>E-mail</dt><dd>{{ user.email }}</dd></div>
         <div><dt>CPF</dt><dd>{{ user.cpf }}</dd></div>
         <div><dt>Telefone</dt><dd>{{ user.telefone }}</dd></div>
+        <div><dt>IF Baiano</dt><dd>{% if user.vinculo_if_baiano %}Campus Guanambi{% else %}Não informado{% endif %}</dd></div>
+        {% if user.vinculo_if_baiano %}<div><dt>Matrícula</dt><dd>{{ user.matricula_institucional }}</dd></div>{% endif %}
         <div><dt>Perfil</dt><dd>{{ user.get_perfil_display }}</dd></div>
     </dl>
 

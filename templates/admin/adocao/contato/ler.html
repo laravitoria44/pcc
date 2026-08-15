@@ -1,0 +1,40 @@
+{% extends 'admin/base_site.html' %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Início</a>
+    &rsaquo; <a href="{{ url_lista }}">Mensagens de contato</a>
+    &rsaquo; Ler mensagem
+</div>
+{% endblock %}
+
+{% block content %}
+<main class="admin-message-page">
+    <header class="admin-message-heading">
+        <div>
+            <span class="admin-detail-eyebrow">Mensagem recebida</span>
+            <h1>{{ contato.assunto|default:'(Sem assunto)' }}</h1>
+            <p>Enviada em {{ contato.data_envio|date:'d/m/Y \à\s H:i' }}</p>
+        </div>
+        <a class="button admin-cancel-button" href="{{ url_lista }}">Voltar à caixa de entrada</a>
+    </header>
+
+    <section class="admin-message-card">
+        <header class="admin-message-sender">
+            <span class="admin-message-avatar">{{ contato.nome|first|upper }}</span>
+            <div>
+                <strong>{{ contato.nome }}</strong>
+                <a href="mailto:{{ contato.email }}">{{ contato.email }}</a>
+                {% if contato.telefone %}<span>{{ contato.telefone }}</span>{% endif %}
+            </div>
+            {% if contato.remetente %}<span class="admin-message-account">Usuário cadastrado</span>{% endif %}
+        </header>
+        <div class="admin-message-body">{{ contato.mensagem|linebreaksbr }}</div>
+    </section>
+
+    <div class="admin-detail-actions">
+        {% if pode_excluir %}<a class="button admin-detail-delete" href="{{ url_excluir }}">Excluir mensagem</a>{% endif %}
+        <a class="button default" href="mailto:{{ contato.email }}?subject=Re:%20{{ contato.assunto|urlencode }}">Responder por e-mail</a>
+    </div>
+</main>
+{% endblock %}

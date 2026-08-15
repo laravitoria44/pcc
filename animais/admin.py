@@ -8,6 +8,7 @@ from .models import Animal, FotoAnimal
 class FotoAnimalInline(admin.TabularInline):
     model = FotoAnimal
     extra = 0
+    fields = ('descricao', 'url_foto', 'arquivo_imagem')
 
 
 @admin.register(Animal)
@@ -20,6 +21,7 @@ class AnimalAdmin(BotaoModificarAdminMixin, admin.ModelAdmin):
         'sexo',
         'porte',
         'status',
+        'botao_detalhes',
         'botao_modificar',
         'botao_excluir',
     )
@@ -43,8 +45,11 @@ class FotoAnimalAdmin(BotaoModificarAdminMixin, admin.ModelAdmin):
         'id_foto',
         'animal',
         'descricao',
+        'botao_detalhes',
         'botao_modificar',
         'botao_excluir',
     )
     search_fields = ('animal__nome', 'descricao')
     autocomplete_fields = ('animal',)
+    list_select_related = ('animal',)
+    fields = ('animal', 'descricao', 'url_foto', 'arquivo_imagem')

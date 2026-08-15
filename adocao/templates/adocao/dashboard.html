@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard de Impacto | PetAdote{% endblock %}
+{% block body_class %}dashboard-page{% endblock %}
+
+{% block content %}
+<section class="impact-dashboard section">
+    <div class="content-width">
+        <header class="impact-dashboard-heading">
+            <div>
+                <h1 class="page-title">Dashboard de Impacto</h1>
+                <p>Acompanhe as estatísticas e a evolução das adoções da nossa plataforma.</p>
+            </div>
+            <span class="dashboard-period" aria-label="Período dos gráficos">▣ {{ periodo_dashboard }}</span>
+        </header>
+
+        <section class="impact-indicators" aria-label="Indicadores do sistema">
+            {% for indicador in indicadores %}
+                <article class="impact-indicator impact-indicator-{{ indicador.classe }}">
+                    <span>{{ indicador.titulo }}</span>
+                    <strong>{{ indicador.valor }}</strong>
+                    <small>{{ indicador.descricao }}</small>
+                </article>
+            {% endfor %}
+        </section>
+
+        <section class="impact-charts" aria-label="Gráficos de adoção">
+            <article class="impact-chart-card impact-chart-wide">
+                <header>
+                    <div>
+                        <h2>Adoções nos últimos 6 meses</h2>
+                        <p>{{ adocoes_mes }} {% if adocoes_mes == 1 %}adoção aprovada{% else %}adoções aprovadas{% endif %} neste mês</p>
+                    </div>
+                </header>
+                <div class="impact-bar-chart" role="img" aria-label="Gráfico de adoções aprovadas nos últimos seis meses">
+                    {% for mes in meses_adocoes %}
+                        <div class="impact-bar-column">
+                            <strong>{{ mes.valor }}</strong>
+                            <span class="impact-bar-track"><i style="height: {{ mes.percentual }}%"></i></span>
+                            <small>{{ mes.rotulo }}<em>{{ mes.ano }}</em></small>
+                        </div>
+                    {% endfor %}
+                </div>
+            </article>
+
+            <article class="impact-chart-card impact-species-card">
+                <header><div><h2>Animais por espécie</h2><p>Distribuição do catálogo</p></div></header>
+                {% if especies %}
+                    <div class="impact-species-content">
+                        <div class="impact-donut" style="background: conic-gradient({{ grafico_especies }})">
+                            <span>{{ total_animais }}<small>animais</small></span>
+                        </div>
+                        <div class="impact-legend">
+                            {% for especie in especies %}
+                                <div><i style="background: {{ especie.cor }}"></i><span><strong>{{ especie.especie }}</strong><small>{{ especie.total }} · {{ especie.percentual }}%</small></span></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="impact-empty">Nenhum animal cadastrado.</p>
+                {% endif %}
+            </article>
+        </section>
+
+        <section class="impact-chart-card impact-status-card" aria-labelledby="status-title">
+            <header><div><h2 id="status-title">Situação dos animais</h2><p>Visão geral dos status cadastrados</p></div></header>
+            {% if situacoes_animais %}
+                <div class="impact-status-grid">
+                    {% for situacao in situacoes_animais %}
+                        <div class="impact-status-item">
+                            <div><strong>{{ situacao.status }}</strong><span>{{ situacao.total }} {% if situacao.total == 1 %}animal{% else %}animais{% endif %}</span></div>
+                            <span class="impact-status-track"><i style="width: {{ situacao.percentual }}%; background: {{ situacao.cor }}"></i></span>
+                            <small>{{ situacao.percentual }}%</small>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="impact-empty">Nenhum animal cadastrado.</p>
+            {% endif %}
+        </section>
+    </div>
+</section>
+{% endblock %}

@@ -3,10 +3,10 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
-from animais.models import Animal
+from animais.models import Animal, FotoAnimal
 from usuarios.models import Usuario
 
-from .models import SolicitacaoAdocao
+from .models import Contato, SolicitacaoAdocao
 
 
 class SolicitacaoAdocaoModelTests(TestCase):
@@ -143,7 +143,7 @@ class PortalSolicitacoesTests(TestCase):
 
 class PaginasPublicasDesignTests(TestCase):
     def test_paginas_publicas_usam_o_mesmo_design_system(self):
-        urls = ('home', 'sobre', 'vacinacao', 'contato')
+        urls = ('home', 'sobre', 'vacinacao', 'contato', 'dashboard')
 
         for nome_url in urls:
             with self.subTest(nome_url=nome_url):
@@ -152,6 +152,193 @@ class PaginasPublicasDesignTests(TestCase):
                 self.assertContains(resposta, 'design-system.css')
                 self.assertContains(resposta, 'class="site-header"')
                 self.assertContains(resposta, 'class="site-footer"')
+
+    def test_dashboard_esta_disponivel_no_menu_e_no_rodape_sem_login(self):
+        resposta = self.client.get(reverse('dashboard'))
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'Dashboard de Impacto')
+        self.assertContains(resposta, reverse('dashboard'), count=2)
+        self.assertContains(resposta, 'Dashboard de impacto')
+
+
+class HomeCarrosselTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.luna = Animal.objects.create(
+            nome='Luna Carrossel',
+            especie='Cachorro',
+            raca='SRD',
+            data_de_nascimento=date(2023, 1, 10),
+            sexo='Fêmea',
+            porte='Médio',
+            cor_pelagem='Caramelo',
+            peso=12.5,
+            castracao=True,
+            descricao_temperamento='Dócil',
+            data_entrada=date(2025, 2, 1),
+            status='Disponível',
+        )
+        cls.mia = Animal.objects.create(
+            nome='Mia Carrossel',
+            especie='Gato',
+            raca='Siamês',
+            data_de_nascimento=date(2022, 5, 8),
+            sexo='Fêmea',
+            porte='Pequeno',
+            cor_pelagem='Creme',
+            peso=4.1,
+            castracao=True,
+            descricao_temperamento='Tranquila',
+            data_entrada=date(2025, 3, 1),
+            status='Disponível',
+        )
+        cls.foto_luna = FotoAnimal.objects.create(
+            animal=cls.luna,
+            descricao='Luna no carrossel',
+            url_foto='https://cdn.example.com/luna-carrossel.jpg',
+        )
+        FotoAnimal.objects.create(
+            animal=cls.mia,
+            descricao='Mia no carrossel',
+            url_foto='https://cdn.example.com/mia-carrossel.jpg',
+        )
+
+    def test_index_exibe_carrossel_com_animais_e_fotos_do_banco(self):
+        resposta = self.client.get(reverse('home'))
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'data-hero-carousel')
+        self.assertContains(resposta, 'Luna Carrossel')
+        self.assertContains(resposta, 'Mia Carrossel')
+        self.assertContains(resposta, self.foto_luna.url_foto)
+        self.assertContains(
+            resposta,
+            reverse('animais:detalhe', args=(self.luna.pk,)),
+        )
+        self.assertContains(resposta, 'data-carousel-next')
+        self.assertNotContains(resposta, 'Pet-Hero-Image.png')
+
+    def test_alterar_foto_no_banco_atualiza_carrossel(self):
+        url_antiga = self.foto_luna.url_foto
+        nova_url = 'https://cdn.example.com/luna-nova-home.jpg'
+        self.foto_luna.url_foto = nova_url
+        self.foto_luna.save(update_fields=('url_foto',))
+
+        resposta = self.client.get(reverse('home'))
+
+        self.assertContains(resposta, nova_url)
+        self.assertNotContains(resposta, url_antiga)
+
+    def test_index_sem_animais_exibe_estado_vazio(self):
+        Animal.objects.all().delete()
+
+        resposta = self.client.get(reverse('home'))
+
+        self.assertContains(resposta, 'Novos amigos chegarão em breve')
+        self.assertNotContains(resposta, 'data-hero-carousel')
+
+
+class ContatoTests(TestCase):
+    dados_validos = {
+        'nome': 'Mariana Souza',
+        'email': 'mariana@example.com',
+        'telefone': '71999998888',
+        'assunto': 'Dúvida sobre adoção',
+        'mensagem': 'Gostaria de saber quais documentos são necessários.',
+    }
+
+    def test_visitante_envia_mensagem_e_dados_sao_salvos(self):
+        resposta = self.client.post(reverse('contato'), self.dados_validos)
+
+        self.assertRedirects(
+            resposta,
+            reverse('contato'),
+            fetch_redirect_response=False,
+        )
+        contato = Contato.objects.get()
+        self.assertEqual(contato.nome, 'Mariana Souza')
+        self.assertEqual(contato.email, 'mariana@example.com')
+        self.assertEqual(contato.telefone, '71999998888')
+        self.assertEqual(contato.assunto, 'Dúvida sobre adoção')
+        self.assertFalse(contato.lida)
+        self.assertIsNone(contato.remetente)
+
+        resposta_confirmacao = self.client.get(reverse('contato'))
+        self.assertContains(resposta_confirmacao, 'Mensagem enviada com sucesso')
+
+    def test_formulario_invalido_exibe_erros_e_nao_salva(self):
+        dados = {**self.dados_validos, 'email': 'email-invalido', 'mensagem': ''}
+
+        resposta = self.client.post(reverse('contato'), dados)
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'Informe um endereço de e-mail válido.')
+        self.assertContains(resposta, 'Escreva uma mensagem.')
+        self.assertFalse(Contato.objects.exists())
+
+    def test_mensagem_de_usuario_logado_guarda_relacao_com_remetente(self):
+        usuario = Usuario.objects.create_user(
+            nome_completo='Cliente Contato',
+            cpf='10120230344',
+            email='cliente.contato@example.com',
+            telefone='71988887777',
+            password='senha-segura-123',
+        )
+        self.client.force_login(usuario)
+
+        resposta_get = self.client.get(reverse('contato'))
+        self.assertContains(resposta_get, usuario.nome_completo)
+        self.assertContains(resposta_get, usuario.email)
+
+        self.client.post(reverse('contato'), self.dados_validos)
+
+        self.assertEqual(Contato.objects.get().remetente, usuario)
+
+
+class AdminContatoTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.administrador = Usuario.objects.create_user(
+            nome_completo='Administrador Contato',
+            cpf='91982873746',
+            email='admin.contato@example.com',
+            telefone='71977776666',
+            password='senha-segura-123',
+            perfil=Usuario.Perfil.ADMINISTRADOR,
+        )
+        cls.contato = Contato.objects.create(
+            nome='Pessoa Interessada',
+            email='pessoa@example.com',
+            telefone='71966665555',
+            assunto='Parceria com a instituição',
+            mensagem='Quero conversar sobre uma parceria para adoções.',
+        )
+
+    def setUp(self):
+        self.client.force_login(self.administrador)
+
+    def test_caixa_de_entrada_exibe_mensagem_e_botao_de_leitura(self):
+        resposta = self.client.get(reverse('admin:adocao_contato_changelist'))
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'Parceria com a instituição')
+        self.assertContains(resposta, 'Pessoa Interessada')
+        self.assertContains(resposta, 'Ler mensagem')
+
+    def test_pagina_de_leitura_exibe_conteudo_e_marca_como_lida(self):
+        resposta = self.client.get(
+            reverse('admin:adocao_contato_ler', args=(self.contato.pk,))
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'Parceria com a instituição')
+        self.assertContains(resposta, 'pessoa@example.com')
+        self.assertContains(resposta, 'Quero conversar sobre uma parceria')
+        self.assertContains(resposta, 'Responder por e-mail')
+        self.contato.refresh_from_db()
+        self.assertTrue(self.contato.lida)
+        self.assertIsNotNone(self.contato.data_leitura)
 
 
 class AdminSolicitacaoActionsTests(TestCase):

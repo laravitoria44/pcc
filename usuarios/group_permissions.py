@@ -50,6 +50,9 @@ PERMISSOES_ADMINISTRADOR = {
         'change_solicitacaoadocao',
         'delete_solicitacaoadocao',
         'view_solicitacaoadocao',
+        'change_contato',
+        'delete_contato',
+        'view_contato',
     },
     'usuarios': {
         'add_usuario',

@@ -18,12 +18,14 @@ class UsuarioAdmin(BotaoModificarAdminMixin, UserAdmin):
         'cpf',
         'email',
         'perfil',
+        'vinculo_if_baiano',
         'grupo_principal',
         'is_active',
+        'botao_detalhes',
         'botao_modificar',
         'botao_excluir',
     )
-    list_filter = ('perfil', 'is_active', 'is_staff', 'is_superuser')
+    list_filter = ('perfil', 'vinculo_if_baiano', 'is_active', 'is_staff', 'is_superuser')
     search_fields = ('nome_completo', 'cpf', 'email', 'matricula_institucional')
     ordering = ('nome_completo',)
     readonly_fields = ('last_login', 'date_joined')
@@ -37,6 +39,8 @@ class UsuarioAdmin(BotaoModificarAdminMixin, UserAdmin):
                     'cpf',
                     'telefone',
                     'foto_perfil',
+                    'arquivo_foto_perfil',
+                    'vinculo_if_baiano',
                     'matricula_institucional',
                     'cargo_funcao',
                     'perfil',
@@ -64,6 +68,9 @@ class UsuarioAdmin(BotaoModificarAdminMixin, UserAdmin):
                     'nome_completo',
                     'cpf',
                     'telefone',
+                    'arquivo_foto_perfil',
+                    'vinculo_if_baiano',
+                    'matricula_institucional',
                     'perfil',
                     'password1',
                     'password2',
@@ -79,7 +86,7 @@ class UsuarioAdmin(BotaoModificarAdminMixin, UserAdmin):
         return grupo.name if grupo else 'Sem grupo'
 
     def get_queryset(self, request):
-        queryset = super().get_queryset(request)
+        queryset = super().get_queryset(request).prefetch_related('groups')
         if request.user.is_superuser:
             return queryset
         return queryset.filter(is_superuser=False)

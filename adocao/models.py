@@ -1,5 +1,34 @@
 from django.db import models
 
+
+class Contato(models.Model):
+    id_contato = models.AutoField(primary_key=True)
+    remetente = models.ForeignKey(
+        'usuarios.Usuario',
+        on_delete=models.SET_NULL,
+        related_name='mensagens_contato',
+        blank=True,
+        null=True,
+    )
+    nome = models.CharField(max_length=150)
+    email = models.EmailField()
+    telefone = models.CharField(max_length=20, blank=True)
+    assunto = models.CharField(max_length=150, blank=True)
+    mensagem = models.TextField()
+    data_envio = models.DateTimeField(auto_now_add=True)
+    lida = models.BooleanField(default=False)
+    data_leitura = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'contato'
+        verbose_name = 'mensagem de contato'
+        verbose_name_plural = 'mensagens de contato'
+        ordering = ('lida', '-data_envio')
+
+    def __str__(self):
+        return self.assunto or f'Mensagem de {self.nome}'
+
+
 class SolicitacaoAdocao(models.Model):
 
     class Status(models.TextChoices):

@@ -1,6 +1,40 @@
 from django import forms
 
-from .models import SolicitacaoAdocao
+from .models import Contato, SolicitacaoAdocao
+
+
+class ContatoForm(forms.ModelForm):
+    class Meta:
+        model = Contato
+        fields = ('nome', 'email', 'telefone', 'assunto', 'mensagem')
+        labels = {
+            'nome': 'Nome completo',
+            'email': 'E-mail',
+            'telefone': 'Telefone',
+            'assunto': 'Assunto',
+            'mensagem': 'Mensagem',
+        }
+        widgets = {
+            'nome': forms.TextInput(attrs={'autocomplete': 'name'}),
+            'email': forms.EmailInput(
+                attrs={'autocomplete': 'email', 'placeholder': 'contato@exemplo.com'}
+            ),
+            'telefone': forms.TextInput(
+                attrs={'autocomplete': 'tel', 'placeholder': '(00) 00000-0000'}
+            ),
+            'assunto': forms.TextInput(
+                attrs={'placeholder': 'Ex: Dúvida sobre adoção de filhote'}
+            ),
+            'mensagem': forms.Textarea(attrs={'rows': 6}),
+        }
+        error_messages = {
+            'nome': {'required': 'Informe seu nome.'},
+            'email': {
+                'required': 'Informe seu e-mail.',
+                'invalid': 'Informe um endereço de e-mail válido.',
+            },
+            'mensagem': {'required': 'Escreva uma mensagem.'},
+        }
 
 
 class SolicitacaoAdocaoForm(forms.Form):

@@ -43,6 +43,15 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     telefone = models.CharField(max_length=20)
     password = models.CharField('senha', max_length=128, db_column='senha')
     foto_perfil = models.URLField(max_length=500, blank=True)
+    arquivo_foto_perfil = models.ImageField(
+        'Foto de perfil',
+        upload_to='usuarios/perfis/',
+        blank=True,
+    )
+    vinculo_if_baiano = models.BooleanField(
+        'é do IF Baiano Campus Guanambi',
+        default=False,
+    )
     matricula_institucional = models.CharField(max_length=50, blank=True)
     cargo_funcao = models.CharField(max_length=100, blank=True)
     perfil = models.CharField(
@@ -74,6 +83,12 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.nome_completo.split()[0]
+
+    @property
+    def foto_perfil_url(self):
+        if self.arquivo_foto_perfil:
+            return self.arquivo_foto_perfil.url
+        return self.foto_perfil
 
     @property
     def senha(self):

@@ -15,16 +15,17 @@
     <header class="site-header">
         <div class="header-inner">
             <a href="{% url 'home' %}" class="site-brand" aria-label="PetAdote — página inicial">
-                <span class="brand-mark" aria-hidden="true">P</span>
-                <span>Pet<strong>Adote</strong></span>
+                <span class="brand-mark" aria-hidden="true"></span>
+                <span>petadote</span>
             </a>
 
             <nav class="main-nav" aria-label="Navegação principal">
-                <a href="{% url 'home' %}">Início</a>
-                <a href="{% url 'quero_adotar' %}">Animais</a>
-                <a href="{% url 'vacinacao' %}">Vacinação</a>
-                <a href="{% url 'sobre' %}">Sobre</a>
-                <a href="{% url 'contato' %}">Contato</a>
+                <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="is-active"{% endif %}>Início</a>
+                <a href="{% url 'quero_adotar' %}" {% if request.resolver_match.app_name == 'animais' %}class="is-active"{% endif %}>Animais</a>
+                <a href="{% url 'vacinacao' %}" {% if request.resolver_match.url_name == 'vacinacao' %}class="is-active"{% endif %}>Vacinação</a>
+                <a href="{% url 'sobre' %}" {% if request.resolver_match.url_name == 'sobre' %}class="is-active"{% endif %}>Sobre</a>
+                <a href="{% url 'contato' %}" {% if request.resolver_match.url_name == 'contato' %}class="is-active"{% endif %}>Contato</a>
+                <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="is-active"{% endif %}>Dashboard</a>
             </nav>
 
             <div class="account-nav">
@@ -36,7 +37,7 @@
                         <a href="{% url 'admin:index' %}" class="header-link header-admin">Administração</a>
                     {% endif %}
                     <a href="{% url 'usuarios:perfil' %}" class="profile-chip" title="Abrir meu perfil">
-                        <span class="profile-avatar">{{ user.get_short_name|first|upper }}</span>
+                        <span class="profile-avatar">{% if user.foto_perfil_url %}<img src="{{ user.foto_perfil_url }}" alt="">{% else %}{{ user.get_short_name|first|upper }}{% endif %}</span>
                         <span>Olá, {{ user.get_short_name }}</span>
                     </a>
                     <form method="post" action="{% url 'usuarios:logout' %}" class="inline-form">
@@ -67,17 +68,14 @@
         <div class="footer-inner">
             <div>
                 <a href="{% url 'home' %}" class="site-brand footer-brand">
-                    <span class="brand-mark" aria-hidden="true">P</span>
-                    <span>Pet<strong>Adote</strong></span>
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span>petadote</span>
                 </a>
-                <p>Adoção responsável, cuidado e transparência em cada encontro.</p>
+                <p>Conectamos corações solitários a animais incríveis que buscam uma segunda chance de amar e ser amados.</p>
             </div>
-            <nav aria-label="Links do rodapé">
-                <a href="{% url 'quero_adotar' %}">Encontrar um animal</a>
-                <a href="{% url 'vacinacao' %}">Guia de vacinação</a>
-                <a href="{% url 'contato' %}">Fale conosco</a>
-            </nav>
-            <p class="footer-copy">&copy; 2026 PetAdote<br>Todos os direitos reservados.</p>
+            <nav aria-label="Links da plataforma"><strong>Plataforma</strong><a href="{% url 'sobre' %}">Como funciona</a><a href="{% url 'quero_adotar' %}">Quero adotar</a><a href="{% url 'contato' %}">Parcerias</a></nav>
+            <nav aria-label="Links institucionais"><strong>Institucional</strong><a href="{% url 'sobre' %}">Sobre nós</a><a href="{% url 'dashboard' %}">Dashboard de impacto</a><a href="{% url 'vacinacao' %}">Dúvidas frequentes</a><a href="{% url 'contato' %}">Contato</a></nav>
+            <div class="footer-bottom"><span>PetAdote © 2026. Todos os direitos reservados.</span><span>Termos de Uso · Política de Privacidade</span></div>
         </div>
     </footer>
 </body>

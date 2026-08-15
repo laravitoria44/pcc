@@ -1,5 +1,8 @@
+import tempfile
 from datetime import date
 
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 
@@ -32,6 +35,26 @@ class AnimalModelTests(TestCase):
         )
 
         self.assertEqual(animal.fotos.count(), 1)
+
+    def test_foto_exige_url_ou_arquivo(self):
+        animal = Animal.objects.create(
+            nome='Sem Foto',
+            especie='Gato',
+            raca='SRD',
+            data_de_nascimento=date(2024, 1, 1),
+            sexo='Fêmea',
+            porte='Pequeno',
+            cor_pelagem='Preta',
+            peso=3.5,
+            castracao=False,
+            descricao_temperamento='Curiosa',
+            data_entrada=date(2026, 1, 1),
+            status='Disponível',
+        )
+        foto = FotoAnimal(animal=animal, descricao='Sem origem de imagem')
+
+        with self.assertRaises(ValidationError):
+            foto.full_clean()
 
 
 class PortalAnimaisTests(TestCase):
@@ -136,6 +159,58 @@ class PortalAnimaisTests(TestCase):
 
         self.assertContains(resposta, 'Luna')
         self.assertNotContains(resposta, 'Mia')
+
+    def test_alterar_url_no_banco_altera_imagem_no_catalogo_e_perfil(self):
+        foto = self.animal.fotos.get()
+        url_anterior = foto.url_foto
+        nova_url = 'https://cdn.example.com/luna-atualizada.jpg'
+
+        foto.url_foto = nova_url
+        foto.save(update_fields=('url_foto',))
+
+        resposta_catalogo = self.client.get(reverse('animais:lista'))
+        resposta_perfil = self.client.get(
+            reverse('animais:detalhe', args=(self.animal.pk,))
+        )
+        self.assertContains(resposta_catalogo, nova_url)
+        self.assertContains(resposta_perfil, nova_url)
+        self.assertNotContains(resposta_catalogo, url_anterior)
+        self.assertNotContains(resposta_perfil, url_anterior)
+
+    def test_upload_tem_prioridade_sobre_url_no_site(self):
+        imagem_gif = (
+            b'GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00'
+            b'\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;'
+        )
+        with tempfile.TemporaryDirectory() as media_root, self.settings(
+            MEDIA_ROOT=media_root
+        ):
+            foto = self.animal.fotos.get()
+            foto.arquivo_imagem = SimpleUploadedFile(
+                'luna-upload.gif',
+                imagem_gif,
+                content_type='image/gif',
+            )
+            foto.save(update_fields=('arquivo_imagem',))
+
+            resposta = self.client.get(reverse('animais:lista'))
+
+            self.assertContains(resposta, foto.arquivo_imagem.url)
+            self.assertNotContains(resposta, foto.url_foto)
+
+    def test_admin_oferece_url_e_upload_para_foto(self):
+        self.client.force_login(self.administrador)
+        foto = self.animal.fotos.get()
+
+        resposta = self.client.get(
+            reverse('admin:animais_fotoanimal_change', args=(foto.pk,))
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'URL da imagem')
+        self.assertContains(resposta, 'Upload da imagem')
+        self.assertContains(resposta, 'type="file"')
 
     def test_anônimo_e_redirecionado_e_administrador_pode_consultar(self):
         self.client.logout()

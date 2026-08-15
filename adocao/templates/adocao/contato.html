@@ -1,40 +1,33 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Contato | PetAdote{% endblock %}
 
 {% block content %}
-    <section class="page-hero">
-        <div class="content-width">
-            <span class="eyebrow-ds">Fale conosco</span>
-            <h1 class="page-title">Estamos aqui para ajudar.</h1>
-            <p class="lead">Envie sua dúvida sobre adoção, parcerias ou cuidados com os animais.</p>
-        </div>
-    </section>
-
     <section class="content-width section contact-grid">
-        <aside class="contact-panel">
-            <h2>Informações de contato</h2>
-            <p>Escolha o canal mais conveniente. Nossa equipe responde durante o horário de atendimento.</p>
-            <div class="contact-list">
-                <div class="contact-item"><strong>Endereço</strong><span>Rua dos Pets, 123 — Salvador, BA</span></div>
-                <div class="contact-item"><strong>E-mail</strong><span>contato@petadote.org.br</span></div>
-                <div class="contact-item"><strong>Telefone</strong><span>(71) 99999-8888</span></div>
-                <div class="contact-item"><strong>Atendimento</strong><span>Segunda a sábado, das 9h às 18h</span></div>
-            </div>
-        </aside>
-
         <div class="ds-form-card">
+            <h1>Envie uma mensagem</h1>
+            <p>Tem alguma dúvida sobre os pets ou sobre como adotar? Escreva pra gente.</p>
             <form method="post" action="{% url 'contato' %}" class="ds-form">
                 {% csrf_token %}
-                <div class="ds-field"><label for="nome">Nome completo</label><input id="nome" name="nome" type="text" autocomplete="name" required></div>
-                <div class="ds-form-row">
-                    <div class="ds-field"><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="email" required></div>
-                    <div class="ds-field"><label for="telefone">Telefone</label><input id="telefone" name="telefone" type="tel" autocomplete="tel"></div>
-                </div>
-                <div class="ds-field"><label for="assunto">Assunto</label><select id="assunto" name="assunto"><option value="">Selecione</option><option>Dúvida sobre adoção</option><option>Quero ser parceiro</option><option>Outros</option></select></div>
-                <div class="ds-field"><label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem" required></textarea></div>
+                {% if form.non_field_errors %}<div class="ds-form-errors">{{ form.non_field_errors }}</div>{% endif %}
+                {% for field in form %}
+                    <div class="ds-field">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                        {{ field }}
+                        {% for error in field.errors %}<p class="ds-field-error">{{ error }}</p>{% endfor %}
+                    </div>
+                {% endfor %}
                 <button type="submit" class="ds-button">Enviar mensagem</button>
             </form>
         </div>
+        <aside class="contact-side">
+            <div class="contact-panel">
+                <h2>Informações de Contato</h2>
+                <div class="contact-list"><div class="contact-item"><strong>Telefone</strong><span>(71) 4002-8922</span></div><div class="contact-item"><strong>E-mail</strong><span>contato@petadote.com.br</span></div><div class="contact-item"><strong>Endereço</strong><span>Av. Sete de Setembro, Salvador/BA</span></div></div>
+                <div class="social-links"><span>REDES SOCIAIS</span><div><b>◎</b><b>f</b><b>♥</b></div></div>
+            </div>
+            <div class="map-card"><img src="{% static 'adocao/images/Map-Card.png' %}" alt="Mapa com a localização do PetAdote"></div>
+        </aside>
     </section>
 {% endblock %}

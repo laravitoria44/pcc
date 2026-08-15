@@ -1,40 +1,51 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Sobre nós | PetAdote{% endblock %}
 
 {% block content %}
-    <section class="page-hero">
-        <div class="content-width">
-            <span class="eyebrow-ds">Nossa missão</span>
-            <h1 class="page-title">Conexões responsáveis que transformam vidas.</h1>
-            <p class="lead">O PetAdote aproxima animais acolhidos de famílias preparadas para oferecer cuidado, segurança e afeto.</p>
+    <section class="about-hero section">
+        <div class="content-width about-hero-grid">
+            <div>
+                <span class="eyebrow-ds">Quem somos</span>
+                <h1 class="page-title">Conectando vidas, transformando destinos.</h1>
+                <p class="lead">Nascemos em 2020 com o propósito de simplificar e tornar seguro o processo de adoção de animais de estimação no Brasil. Acreditamos que a tecnologia pode ser uma grande aliada na luta contra o abandono e na promoção da posse responsável.</p>
+            </div>
+            <img src="{% static 'adocao/images/Hero-Illustration.png' %}" alt="Equipe PetAdote cuidando dos animais">
         </div>
-    </section>
-
-    <section class="content-width section two-column">
-        <div class="prose">
-            <h2>Por que existimos</h2>
-            <p>Acreditamos que uma adoção bem-sucedida começa com informação. Por isso, reunimos o perfil, o histórico de vacinação e as condições de saúde de cada animal em uma experiência clara.</p>
-            <p>Nossa equipe acompanha as solicitações para encontrar combinações responsáveis e duradouras, respeitando as necessidades da família e do animal.</p>
-        </div>
-        <aside class="highlight-panel">
-            <h2>Nosso compromisso</h2>
-            <ul>
-                <li>Transparência em todas as etapas da adoção.</li>
-                <li>Bem-estar animal como prioridade.</li>
-                <li>Proteção dos dados de clientes e parceiros.</li>
-                <li>Acompanhamento de saúde e vacinação.</li>
-            </ul>
-        </aside>
     </section>
 
     <section class="soft-section section">
         <div class="content-width">
-            <div class="section-heading-ds"><div><span class="eyebrow-ds">Nossos valores</span><h2>O que orienta cada decisão</h2></div></div>
+            <div class="section-heading-ds section-heading-centered"><div><h2>Nossos Valores</h2><p>Os pilares que guiam todas as nossas decisões e conexões diárias.</p></div></div>
             <div class="value-grid">
-                <article class="ds-card"><span class="ds-card-icon">A</span><h3>Acolhimento</h3><p>Tratamos cada história com respeito, empatia e atenção.</p></article>
-                <article class="ds-card"><span class="ds-card-icon">C</span><h3>Cuidado</h3><p>Saúde e segurança são essenciais antes, durante e depois da adoção.</p></article>
-                <article class="ds-card"><span class="ds-card-icon">R</span><h3>Responsabilidade</h3><p>Incentivamos decisões conscientes e compromissos duradouros.</p></article>
+                <article class="ds-card"><span class="ds-card-icon">◇</span><h3>Transparência</h3><p>Todas as informações sobre os pets são verificadas para garantir segurança completa.</p></article>
+                <article class="ds-card"><span class="ds-card-icon">⌁</span><h3>Responsabilidade</h3><p>Promovemos a conscientização e acompanhamos todas as etapas do pós-adoção.</p></article>
+                <article class="ds-card"><span class="ds-card-icon">♡</span><h3>Amor pelos animais</h3><p>Nossa maior motivação é ver cada focinho feliz e seguro em um lar.</p></article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section trajectory-section">
+        <div class="content-width">
+            <div class="section-heading-ds section-heading-centered"><div><h2>Nossa Trajetória</h2><p>Uma história construída passo a passo com muito trabalho e amor.</p></div></div>
+            <div class="trajectory-grid">
+                <article><strong>2020</strong><h3>Fundação</h3><p>Criamos a plataforma inicial com 5 abrigos parceiros.</p></article>
+                <article><strong>2021</strong><h3>1.000 Adoções</h3><p>Alcançamos nosso primeiro grande marco de vidas transformadas.</p></article>
+                <article><strong>2022</strong><h3>Expansão</h3><p>Chegamos a todas as capitais do Sul e Sudeste.</p></article>
+                <article><strong>2023</strong><h3>App Lançado</h3><p>Facilitamos o acompanhamento dos processos na palma da mão.</p></article>
+                <article><strong>2024</strong><h3>10.000+ Adoções</h3><p>Consolidamos a maior rede de adoção do país.</p></article>
+            </div>
+        </div>
+    </section>
+
+    <section class="soft-section section">
+        <div class="content-width">
+            <div class="section-heading-ds section-heading-centered"><div><h2>Quem Faz Acontecer</h2><p>Nossa equipe trabalha para promover finais felizes.</p></div></div>
+            <div class="team-grid">
+                <article class="team-card"><img src="{% static 'adocao/images/Photo.png' %}" alt="Mariana Costa"><h3>Mariana Costa</h3><p>Co-fundadora &amp; Diretora</p></article>
+                <article class="team-card"><img src="{% static 'adocao/images/Photo(1).png' %}" alt="Dr. Roberto Dias"><h3>Dr. Roberto Dias</h3><p>Veterinário Chefe</p></article>
+                <article class="team-card"><img src="{% static 'adocao/images/Photo(2).png' %}" alt="Lucas Melo"><h3>Lucas Melo</h3><p>Coordenador de Resgates</p></article>
             </div>
         </div>
     </section>
